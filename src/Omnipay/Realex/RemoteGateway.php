@@ -4,7 +4,7 @@ namespace Omnipay\Realex;
 
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Realex\Message\CompletePurchaseRequest;
-use Omnipay\Realex\Message\PurchaseRequest;
+use Omnipay\Realex\Message\AuthRequest;
 
 /**
  * Realex Remote Gateway
@@ -21,7 +21,8 @@ class RemoteGateway extends AbstractGateway
         return array(
             'merchantId' => '',
             'account' => '',
-            'secret' => ''
+            'secret' => '',
+            '3dSecure' => 0
         );
     }
 
@@ -55,10 +56,23 @@ class RemoteGateway extends AbstractGateway
         return $this->setParameter('secret', $value);
     }
 
+    public function get3dSecure()
+    {
+        return $this->getParameter('3dSecure');
+    }
+
+    public function set3dSecure($value)
+    {
+        return $this->setParameter('3dSecure', $value);
+    }
+
     public function purchase(array $parameters = array())
     {
-        // see if the card is enrolled in 3D Secure first
-        return $this->createRequest('\Omnipay\Realex\Message\EnrolmentRequest', $parameters);
+        if ($this->get3dSecure()) {
+            return $this->createRequest('\Omnipay\Realex\Message\AuthRequest', $parameters);
+        } else {
+            return $this->createRequest('\Omnipay\Realex\Message\EnrolmentRequest', $parameters);
+        }
     }
 
 }

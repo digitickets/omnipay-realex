@@ -8,9 +8,9 @@ use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RedirectResponseInterface;
 
 /**
- * Realex Purchase Response
+ * Realex Auth Response
  */
-class PurchaseResponse extends RemoteAbstractResponse implements RedirectResponseInterface
+class AuthResponse extends RemoteAbstractResponse implements RedirectResponseInterface
 {
     public function isSuccessful()
     {

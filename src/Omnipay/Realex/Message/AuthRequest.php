@@ -6,9 +6,9 @@ use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Message\AbstractRequest;
 
 /**
- * Realex Purchase Request
+ * Realex Auth Request
  */
-class PurchaseRequest extends RemoteAbstractRequest
+class AuthRequest extends RemoteAbstractRequest
 {
     protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
@@ -130,7 +130,7 @@ class PurchaseRequest extends RemoteAbstractRequest
 
     protected function createResponse($data)
     {
-        return $this->response = new PurchaseResponse($this, $data);
+        return $this->response = new AuthResponse($this, $data);
     }
 
     public function getEndpoint()

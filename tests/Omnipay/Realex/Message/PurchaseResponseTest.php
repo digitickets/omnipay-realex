@@ -8,7 +8,7 @@ class PurchaseResponseTest extends TestCase
 {
     public function testPurchaseSuccess()
     {
-        $response = new PurchaseResponse($this->getMockRequest(), array(
+        $response = new AuthResponse($this->getMockRequest(), array(
             'amount' => 1000,
             'returnUrl' => 'https://www.example.com/return',
         ));
