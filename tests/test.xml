@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<submit>
+    <shortCode>EOS</shortCode>
+    <order orderCode="EOS/EAE-D/123453465541">
+        <description>DigiTickets Test Transaction</description>
+        <amount currencyCode="AED" debitCreditIndicator="credit" exponent="2" value="1000"/>
+        <paymentDetails>
+            <cardHolderName>Eilís Buitléir</cardHolderName>
+            <cardAddress>
+                <address>
+                    <firstName>Eilís</firstName>
+                    <lastName>Buitléir</lastName>
+                    <street>10 Web Drive</street>
+                    <postalCode>SW1A 0AA</postalCode>
+                    <city>London</city>
+                    <countryCode>GB</countryCode>
+                </address>
+            </cardAddress>
+        </paymentDetails>
+        <shopper>
+            <shopperIPAddress>127.0.0.1</shopperIPAddress>
+            <shopperEmailAddress>andy@websitevision.co.uk</shopperEmailAddress>
+        </shopper>
+        <shippingAddress>
+            <address>
+                <firstName>Eilís</firstName>
+                <lastName>Buitléir</lastName>
+                <street>10 Web Drive</street>
+                <postalCode>SW1A 0AA</postalCode>
+                <city>London</city>
+                <countryCode>GB</countryCode>
+                <telephoneNumber>01234 567890</telephoneNumber>
+            </address>
+        </shippingAddress>
+    </order>
+    <paymentPageID>EAE</paymentPageID>
+    <subCode>EAE</subCode>
+    <returnURL>http://omnipay.local/gateways/Realex/completePurchase</returnURL>
+</submit>
