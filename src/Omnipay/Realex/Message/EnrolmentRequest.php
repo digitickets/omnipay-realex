@@ -3,14 +3,13 @@
 namespace Omnipay\Realex\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
-use Omnipay\Common\Message\AbstractRequest;
 
 /**
- * Realex Purchase Request
+ * Realex 3D Secure enrolment request
  */
-class PurchaseRequest extends RemoteAbstractRequest
+class EnrolmentRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
+    protected $endpoint = 'https://epage.payandshop.com/epage-3dsecure.cgi';
 
     /**
      * Get the XML registration string to be sent to the gateway
@@ -38,7 +37,7 @@ class PurchaseRequest extends RemoteAbstractRequest
 
         // root element
         $root = $domTree->createElement('request');
-        $root->setAttribute('type', 'auth');
+        $root->setAttribute('type', '3ds-verifyenrolled');
         $root->setAttribute('timestamp', $timestamp);
         $root = $domTree->appendChild($root);
 
@@ -94,20 +93,8 @@ class PurchaseRequest extends RemoteAbstractRequest
 
         $root->appendChild($cardEl);
 
-        $settleEl = $domTree->createElement('autosettle');
-        $settleEl->setAttribute('flag', 1);
-        $root->appendChild($settleEl);
-
         $md5El = $domTree->createElement('md5hash', $md5hash);
         $root->appendChild($md5El);
-
-        $tssEl = $domTree->createElement('tssinfo');
-        $addressEl = $domTree->createElement('address');
-        $addressEl->setAttribute('type', 'billing');
-        $countryEl = $domTree->createElement('country', $card->getBillingCountry());
-        $addressEl->appendChild($countryEl);
-        $tssEl->appendChild($addressEl);
-        $root->appendChild($tssEl);
 
         $xmlString = $domTree->saveXML($root);
 
@@ -130,7 +117,7 @@ class PurchaseRequest extends RemoteAbstractRequest
 
     protected function createResponse($data)
     {
-        return $this->response = new PurchaseResponse($this, $data);
+        return $this->response = new EnrolmentResponse($this, $data);
     }
 
     public function getEndpoint()

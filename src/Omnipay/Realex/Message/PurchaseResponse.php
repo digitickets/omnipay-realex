@@ -10,30 +10,21 @@ use Omnipay\Common\Message\RedirectResponseInterface;
 /**
  * Realex Purchase Response
  */
-class PurchaseResponse extends AbstractResponse implements RedirectResponseInterface
+class PurchaseResponse extends RemoteAbstractResponse implements RedirectResponseInterface
 {
     public function isSuccessful()
     {
-        $xml = $this->getXml();
-        $success = ($xml->result == '00');
-
-        return $success;
+        return ($this->xml->result == '00');
     }
 
     public function getMessage()
     {
-        $xml = $this->getXml();
-        $message = (string)$xml->message;
-
-        return $message;
+        return (string)$this->xml->message;
     }
 
     public function getTransactionReference()
     {
-        $xml = $this->getXml();
-        $transactionReference = !empty($xml->pasref) ? $xml->pasref : null;
-
-        return $transactionReference;
+        return ($this->xml->pasref) ? $this->xml->pasref : null;
     }
 
     public function isRedirect()
@@ -49,19 +40,6 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
     public function getRedirectData()
     {
         return null;
-    }
-
-    public function getXml()
-    {
-        $rawData = $this->data;
-
-        $rawData = str_replace('  ', ' ', $rawData);
-        $rawData = str_replace("\n", '', $rawData);
-        $rawData = str_replace("\r", '', $rawData);
-
-        $xml = new \SimpleXMLElement($rawData);
-
-        return $xml;
     }
 
     /**
