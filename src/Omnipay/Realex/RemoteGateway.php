@@ -69,9 +69,9 @@ class RemoteGateway extends AbstractGateway
     public function purchase(array $parameters = array())
     {
         if ($this->get3dSecure()) {
-            return $this->createRequest('\Omnipay\Realex\Message\AuthRequest', $parameters);
-        } else {
             return $this->createRequest('\Omnipay\Realex\Message\EnrolmentRequest', $parameters);
+        } else {
+            return $this->createRequest('\Omnipay\Realex\Message\AuthRequest', $parameters);
         }
     }
 
