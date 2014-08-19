@@ -61,4 +61,14 @@ abstract class RemoteAbstractRequest extends AbstractRequest
         return $this->setParameter('secret', $value);
     }
 
+    public function getReturnUrl()
+    {
+        return $this->getParameter('returnUrl');
+    }
+
+    public function setReturnUrl($value)
+    {
+        return $this->setParameter('returnUrl', $value);
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace Omnipay\Realex\Message;
 
+use Omnipay\Common\CreditCard;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\AbstractResponse;
@@ -10,14 +11,14 @@ use Omnipay\Common\Message\RequestInterface;
 
 /**
  * Realex Enrolment Response
+ *
+ * @property EnrolmentRequest $request
  */
 class EnrolmentResponse extends RemoteAbstractResponse implements RedirectResponseInterface
 {
     public function isSuccessful()
     {
-        $success = ($this->xml->result == '00');
-
-        return $success;
+        return false;
     }
 
     public function getMessage()
@@ -50,12 +51,45 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
 
     public function getRedirectMethod()
     {
-        return 'GET';
+        return 'POST';
+    }
+
+    /**
+     * Any encrypted data that we wish to have returned to us.
+     * Basically, this is all the card data that we will have to
+     * re-submit to to Realex in order to complete the authorisation.
+     */
+    protected function getMerchantData()
+    {
+        /**
+         * @var CreditCard $card
+         */
+        $card = $this->request->getCard();
+        $data = array(
+            'transactionReference' => $this->request->getTransactionReference(),
+            'currency'             => $this->request->getCurrency(),
+            'amount'               => $this->request->getAmountInteger(),
+            'number'               => $card->getNumber(),
+            'expiryMonth'          => $card->getExpiryMonth(),
+            'expiryYear'           => $card->getExpiryYear(),
+            'billingName'          => $card->getBillingName(),
+            'cvv'                  => $card->getCvv(),
+            'issueNumber'          => $card->getIssueNumber(),
+            'billingCountry'       => $card->getBillingCountry()
+        );
+        $serialised = json_encode($data);
+        $encoded = base64_encode($serialised);
+
+        return $encoded;
     }
 
     public function getRedirectData()
     {
-        return null;
+        return array(
+            'PaReq'   => (string)$this->xml->pareq,
+            'TermUrl' => $this->request->getReturnUrl(),
+            'MD'      => $this->getMerchantData()
+        );
     }
 
 }
