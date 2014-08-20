@@ -79,44 +79,12 @@ class RemoteGateway extends AbstractGateway
     }
 
     /**
-     * This will always be called as the result of returning from 3D Secure
-     *
-     * @param array $parameters
-     * @return RemoteAbstractResponse
+     * This will always be called as the result of returning from 3D Secure.
+     * Verify that the 3D Secure message we've received is legit
      */
     public function completePurchase(array $parameters = array())
     {
-        /**
-         * Verify that the 3D Secure message we've received is legit
-         *
-         * @var VerifySigRequest $request
-         * @var VerifySigResponse $response
-         */
-        $request = $this->createRequest('\Omnipay\Realex\Message\VerifySigRequest', $parameters);
-        $response = $request->send();
-
-
-
-        if ($response->isSuccessful()) {
-
-            echo '<pre>'; var_dump('asdf'); echo '</pre>'; exit;
-
-            // a few additional parameters that need to be passed for 3D-Secure transactions
-            $parameters = $request->getParameters();
-            $parameters['eci'] = $response->getParam('eci');
-            $parameters['xid'] = $response->getParam('xid');
-            $parameters['eci'] = $response->getParam('eci');
-
-            /**
-             * Now do our authorisation
-             *
-             * @var AuthRequest $request
-             * @var AuthResponse $response
-             */
-            $response = $this->createRequest('\Omnipay\Realex\Message\AuthRequest', $parameters);
-        }
-
-        return $response;
+        return $this->createRequest('\Omnipay\Realex\Message\VerifySigRequest', $parameters);
     }
 
 }

@@ -128,4 +128,39 @@ class VerifySigRequest extends RemoteAbstractRequest
     {
         return $this->endpoint;
     }
+
+    /**
+     * @param mixed $parameters
+     *
+     * @return AuthResponse|VerifySigResponse
+     */
+    public function sendData($parameters)
+    {
+        /**
+         * @var VerifySigResponse $response
+         */
+        $response = parent::sendData($parameters);
+
+        if ($response->isSuccessful()) {
+
+            // a few additional parameters that need to be passed for 3D-Secure transactions
+            $parameters = $this->getParameters();
+            $parameters['eci'] = $response->getParam('eci');
+            $parameters['xid'] = $response->getParam('xid');
+            $parameters['eci'] = $response->getParam('eci');
+
+            /**
+             * Now finally, do our authorisation
+             *
+             * @var AuthRequest $request
+             * @var AuthResponse $response
+             */
+            $request = new AuthRequest($this->httpClient, $this->httpRequest);
+            $request->initialize($parameters);
+
+            $response = $request->send();
+        }
+
+        return $response;
+    }
 }
