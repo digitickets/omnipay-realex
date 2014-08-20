@@ -2,15 +2,31 @@
 
 namespace Omnipay\Realex\Message;
 
+use Omnipay\Common\CreditCard;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Message\AbstractRequest;
 
 /**
- * Realex Auth Request
+ * Realex Complete Auth Request
  */
-class AuthRequest extends RemoteAbstractRequest
+class VerifySigRequest extends RemoteAbstractRequest
 {
     protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
+
+
+    /**
+     * Decode our previously-encoded Merchant Data
+     *
+     * @param string $data
+     * @return array
+     */
+    protected function decodeMerchantData($data)
+    {
+        $json = base64_decode($data);
+        $cardData = (array)json_decode($json);
+
+        return $cardData;
+    }
 
     /**
      * Get the XML registration string to be sent to the gateway
@@ -19,7 +35,18 @@ class AuthRequest extends RemoteAbstractRequest
      */
     public function getData()
     {
-        $this->validate('amount', 'currency', 'transactionReference');
+        /**
+         * Data will be sent from the 3D Secure provider in two fields: MD and ParRes.
+         * MD contains our original data (encoded by us) and PaRes will be sent to the gateway.
+         */
+        $returnedData = $this->decodeMerchantData($this->httpRequest->request->get('MD', ''));
+
+        $this->setTransactionReference($returnedData['transactionReference']);
+        $this->setAmount($returnedData['amount']);
+        $this->setCurrency($returnedData['currency']);
+        $this->setCard(new CreditCard($returnedData));
+
+        $paRes = $this->httpRequest->request->get('PaRes', '');
 
         // Create the hash
         $timestamp = strftime("%Y%m%d%H%M%S");
@@ -38,7 +65,7 @@ class AuthRequest extends RemoteAbstractRequest
 
         // root element
         $root = $domTree->createElement('request');
-        $root->setAttribute('type', 'auth');
+        $root->setAttribute('type', '3ds-verifysig');
         $root->setAttribute('timestamp', $timestamp);
         $root = $domTree->appendChild($root);
 
@@ -79,35 +106,13 @@ class AuthRequest extends RemoteAbstractRequest
         $cardNameEl = $domTree->createElement('chname', $card->getBillingName());
         $cardEl->appendChild($cardNameEl);
 
-        $cvnEl = $domTree->createElement('cvn');
-
-        $cvnNumberEl = $domTree->createElement('number', $card->getCvv());
-        $cvnEl->appendChild($cvnNumberEl);
-
-        $presIndEl = $domTree->createElement('presind', 1);
-        $cvnEl->appendChild($presIndEl);
-
-        $cardEl->appendChild($cvnEl);
-
-        $issueEl = $domTree->createElement('issueno', $card->getIssueNumber());
-        $cardEl->appendChild($issueEl);
-
         $root->appendChild($cardEl);
 
-        $settleEl = $domTree->createElement('autosettle');
-        $settleEl->setAttribute('flag', 1);
-        $root->appendChild($settleEl);
+        $paResEl = $domTree->createElement('pares', $paRes);
+        $root->appendChild($paResEl);
 
         $md5El = $domTree->createElement('md5hash', $md5hash);
         $root->appendChild($md5El);
-
-        $tssEl = $domTree->createElement('tssinfo');
-        $addressEl = $domTree->createElement('address');
-        $addressEl->setAttribute('type', 'billing');
-        $countryEl = $domTree->createElement('country', $card->getBillingCountry());
-        $addressEl->appendChild($countryEl);
-        $tssEl->appendChild($addressEl);
-        $root->appendChild($tssEl);
 
         $xmlString = $domTree->saveXML($root);
 
@@ -116,7 +121,7 @@ class AuthRequest extends RemoteAbstractRequest
 
     protected function createResponse($data)
     {
-        return $this->response = new AuthResponse($this, $data);
+        return $this->response = new VerifySigResponse($this, $data);
     }
 
     public function getEndpoint()

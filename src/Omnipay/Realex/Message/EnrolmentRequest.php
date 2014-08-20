@@ -101,20 +101,6 @@ class EnrolmentRequest extends RemoteAbstractRequest
         return $xmlString;
     }
 
-    public function sendData($data)
-    {
-        // register the payment
-        $this->httpClient->setConfig(array(
-            'curl.options' => array(
-                'CURLOPT_SSLVERSION'     => 1,
-                'CURLOPT_SSL_VERIFYPEER' => false
-            )
-        ));
-        $httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data)->send();
-
-        return $this->createResponse($httpResponse->getBody(true));
-    }
-
     protected function createResponse($data)
     {
         return $this->response = new EnrolmentResponse($this, $data);

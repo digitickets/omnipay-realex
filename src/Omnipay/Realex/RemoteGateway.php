@@ -3,8 +3,11 @@
 namespace Omnipay\Realex;
 
 use Omnipay\Common\AbstractGateway;
-use Omnipay\Realex\Message\CompletePurchaseRequest;
 use Omnipay\Realex\Message\AuthRequest;
+use Omnipay\Realex\Message\AuthResponse;
+use Omnipay\Realex\Message\RemoteAbstractResponse;
+use Omnipay\Realex\Message\VerifySigRequest;
+use Omnipay\Realex\Message\VerifySigResponse;
 
 /**
  * Realex Remote Gateway
@@ -20,9 +23,9 @@ class RemoteGateway extends AbstractGateway
     {
         return array(
             'merchantId' => '',
-            'account' => '',
-            'secret' => '',
-            '3dSecure' => 0
+            'account'    => '',
+            'secret'     => '',
+            '3dSecure'   => 0
         );
     }
 
@@ -75,10 +78,45 @@ class RemoteGateway extends AbstractGateway
         }
     }
 
+    /**
+     * This will always be called as the result of returning from 3D Secure
+     *
+     * @param array $parameters
+     * @return RemoteAbstractResponse
+     */
     public function completePurchase(array $parameters = array())
     {
-        // this will always be called as a result of a 3D Secure enrolment verification
-        return $this->createRequest('\Omnipay\Realex\Message\CompleteAuthRequest', $parameters);
+        /**
+         * Verify that the 3D Secure message we've received is legit
+         *
+         * @var VerifySigRequest $request
+         * @var VerifySigResponse $response
+         */
+        $request = $this->createRequest('\Omnipay\Realex\Message\VerifySigRequest', $parameters);
+        $response = $request->send();
+
+
+
+        if ($response->isSuccessful()) {
+
+            echo '<pre>'; var_dump('asdf'); echo '</pre>'; exit;
+
+            // a few additional parameters that need to be passed for 3D-Secure transactions
+            $parameters = $request->getParameters();
+            $parameters['eci'] = $response->getParam('eci');
+            $parameters['xid'] = $response->getParam('xid');
+            $parameters['eci'] = $response->getParam('eci');
+
+            /**
+             * Now do our authorisation
+             *
+             * @var AuthRequest $request
+             * @var AuthResponse $response
+             */
+            $response = $this->createRequest('\Omnipay\Realex\Message\AuthRequest', $parameters);
+        }
+
+        return $response;
     }
 
 }
