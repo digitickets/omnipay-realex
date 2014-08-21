@@ -7,7 +7,7 @@
 [![Total Downloads](https://poser.pugx.org/coatesap/omnipay-realex/d/total.png)](https://packagist.org/packages/coatesap/omnipay-realex)
 
 [Omnipay](https://github.com/omnipay/omnipay) is a framework agnostic, multi-gateway payment
-processing library for PHP 5.3+. This package implements Realex (Remote MPI) support for Omnipay.
+processing library for PHP 5.3+. This package implements Realex (Remote MPI) integration for Omnipay, including optional 3D Secure support.
 
 ## Installation
 
