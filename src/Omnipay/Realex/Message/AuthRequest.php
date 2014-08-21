@@ -49,12 +49,12 @@ class AuthRequest extends RemoteAbstractRequest
      */
     public function getData()
     {
-        $this->validate('amount', 'currency', 'transactionReference');
+        $this->validate('amount', 'currency', 'transactionId');
 
         // Create the hash
         $timestamp = strftime("%Y%m%d%H%M%S");
         $merchantId = $this->getMerchantId();
-        $orderId = $this->getTransactionReference();
+        $orderId = $this->getTransactionId();
         $amount = $this->getAmountInteger();
         $currency = $this->getCurrency();
         $cardNumber = $this->getCard()->getNumber();

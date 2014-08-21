@@ -41,7 +41,7 @@ class VerifySigRequest extends RemoteAbstractRequest
          */
         $returnedData = $this->decodeMerchantData($this->httpRequest->request->get('MD', ''));
 
-        $this->setTransactionReference($returnedData['transactionReference']);
+        $this->setTransactionId($returnedData['transactionId']);
         $this->setAmount($returnedData['amount']);
         $this->setCurrency($returnedData['currency']);
         $this->setCard(new CreditCard($returnedData));
@@ -51,7 +51,7 @@ class VerifySigRequest extends RemoteAbstractRequest
         // Create the hash
         $timestamp = strftime("%Y%m%d%H%M%S");
         $merchantId = $this->getMerchantId();
-        $orderId = $this->getTransactionReference();
+        $orderId = $this->getTransactionId();
         $amount = $this->getAmountInteger();
         $currency = $this->getCurrency();
         $cardNumber = $this->getCard()->getNumber();

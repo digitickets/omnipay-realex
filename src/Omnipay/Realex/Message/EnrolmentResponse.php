@@ -71,7 +71,7 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
          */
         $card = $this->request->getCard();
         $data = array(
-            'transactionReference' => $this->request->getTransactionReference(),
+            'transactionId' => $this->request->getTransactionId(),
             'currency'             => $this->request->getCurrency(),
             'amount'               => $this->request->getAmount(),
             'number'               => $card->getNumber(),
