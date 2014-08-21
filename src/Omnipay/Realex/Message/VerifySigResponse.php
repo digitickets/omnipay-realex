@@ -14,7 +14,12 @@ class VerifySigResponse extends RemoteAbstractResponse implements RedirectRespon
 {
     public function isSuccessful()
     {
-        return ($this->xml->result == '00');
+        /**
+         * The 3D secure result is only counted as successful if is:
+         *  - legitimate - (result = 00)
+         *  - card holder correctly entered their password, or the 3DS systems are unavailable at the moment
+         */
+        return ($this->xml->result == '00' && $this->xml->threedsecure->status != 'N');
     }
 
     /**
@@ -37,7 +42,19 @@ class VerifySigResponse extends RemoteAbstractResponse implements RedirectRespon
 
     public function getMessage()
     {
-        return (string)$this->xml->message;
+        /**
+         * For some reason, the default message from the gateway
+         * says "Authentication Successful", even if the customer
+         * was shown to have used an incorrect password. For sane
+         * front-end reporting, let's override this.
+         */
+        if ($this->xml->threedsecure->status == 'N') {
+            $message = '3D Secure Authentication Unsuccessful';
+        } else {
+            $message = (string)$this->xml->message;
+        }
+
+        return $message;
     }
 
     public function getTransactionReference()

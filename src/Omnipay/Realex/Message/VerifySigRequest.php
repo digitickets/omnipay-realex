@@ -145,9 +145,9 @@ class VerifySigRequest extends RemoteAbstractRequest
 
             // a few additional parameters that need to be passed for 3D-Secure transactions
             $parameters = $this->getParameters();
+            $parameters['cavv'] = $response->getParam('cavv');
             $parameters['eci'] = $response->getParam('eci');
             $parameters['xid'] = $response->getParam('xid');
-            $parameters['eci'] = $response->getParam('eci');
 
             /**
              * Now finally, do our authorisation

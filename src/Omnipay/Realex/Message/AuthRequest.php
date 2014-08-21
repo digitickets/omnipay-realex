@@ -12,6 +12,36 @@ class AuthRequest extends RemoteAbstractRequest
 {
     protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
+    public function getCavv()
+    {
+        return $this->getParameter('cavv');
+    }
+
+    public function setCavv($value)
+    {
+        return $this->setParameter('cavv', $value);
+    }
+
+    public function getEci()
+    {
+        return $this->getParameter('eci');
+    }
+
+    public function setEci($value)
+    {
+        return $this->setParameter('eci', $value);
+    }
+
+    public function getXid()
+    {
+        return $this->getParameter('xid');
+    }
+
+    public function setXid($value)
+    {
+        return $this->setParameter('xid', $value);
+    }
+
     /**
      * Get the XML registration string to be sent to the gateway
      *
@@ -97,6 +127,16 @@ class AuthRequest extends RemoteAbstractRequest
         $settleEl = $domTree->createElement('autosettle');
         $settleEl->setAttribute('flag', 1);
         $root->appendChild($settleEl);
+
+        // 3D Secure section
+        $mpiEl = $domTree->createElement('mpi');
+        $cavvEl = $domTree->createElement('cavv', $this->getCavv());
+        $xidEl = $domTree->createElement('xid', $this->getXid());
+        $eciEl = $domTree->createElement('eci', $this->getEci());
+        $mpiEl->appendChild($cavvEl);
+        $mpiEl->appendChild($xidEl);
+        $mpiEl->appendChild($eciEl);
+        $root->appendChild($mpiEl);
 
         $md5El = $domTree->createElement('md5hash', $md5hash);
         $root->appendChild($md5El);
