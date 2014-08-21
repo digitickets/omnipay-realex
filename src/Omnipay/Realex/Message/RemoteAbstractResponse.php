@@ -36,5 +36,4 @@ abstract class RemoteAbstractResponse extends AbstractResponse implements Redire
 
         return new \SimpleXMLElement($data);
     }
-
 }

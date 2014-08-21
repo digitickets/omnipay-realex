@@ -85,8 +85,7 @@ abstract class RemoteAbstractRequest extends AbstractRequest
         return $this->createResponse($httpResponse->getBody(true));
     }
 
-    public abstract function getEndpoint();
+    abstract public function getEndpoint();
 
-    protected abstract function createResponse($data);
-
+    abstract protected function createResponse($data);
 }

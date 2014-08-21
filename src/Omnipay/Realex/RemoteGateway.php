@@ -86,5 +86,4 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->createRequest('\Omnipay\Realex\Message\VerifySigRequest', $parameters);
     }
-
 }
