@@ -103,7 +103,21 @@ class EnrolmentRequest extends RemoteAbstractRequest
 
     protected function createResponse($data)
     {
-        return $this->response = new EnrolmentResponse($this, $data);
+        /**
+         * We need to inspect this response to see if the customer is actually
+         * enrolled in the 3D Secure program. If they're not, we can go ahead
+         * and do a normal auth instead.
+         */
+        $response = $this->response = new EnrolmentResponse($this, $data);
+
+        if (!$response->isEnrolled()) {
+            $request = new AuthRequest($this->httpClient, $this->httpRequest);
+            $request->initialize($this->getParameters());
+
+            $response = $request->send();
+        }
+
+        return $response;
     }
 
     public function getEndpoint()

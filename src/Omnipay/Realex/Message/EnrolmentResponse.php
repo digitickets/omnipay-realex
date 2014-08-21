@@ -21,6 +21,11 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
         return false;
     }
 
+    public function isEnrolled()
+    {
+        return $this->xml->enrolled == 'Y';
+    }
+
     public function getMessage()
     {
         $message = (string)$this->xml->message;
