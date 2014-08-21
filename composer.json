@@ -19,7 +19,7 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Omnipay\\Realex\\" : "src/" }
+        "psr-0": { "Omnipay\\Realex\\" : "src/" }
     },
     "require": {
         "omnipay/common": "~2.0"
