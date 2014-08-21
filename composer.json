@@ -12,6 +12,7 @@
         "realex"
     ],
     "homepage": "https://github.com/coatesap/omnipay-realex",
+    "license": "MIT",
     "authors": [
         {
             "name": "Andrew Coates",
