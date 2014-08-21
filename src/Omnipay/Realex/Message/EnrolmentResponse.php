@@ -96,5 +96,4 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
             'MD'      => $this->getMerchantData()
         );
     }
-
 }
