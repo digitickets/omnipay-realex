@@ -1,0 +1,36 @@
+{
+    "name": "coatesap/omnipay-realex",
+    "type": "library",
+    "description": "Realex driver for the Omnipay PHP payment processing library",
+    "keywords": [
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment",
+        "purchase",
+        "realex"
+    ],
+    "homepage": "https://github.com/coatesap/omnipay-realex",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrew Coates",
+            "email": "andycoatz@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Omnipay\\Realex\\" : "src/" }
+    },
+    "require": {
+        "omnipay/common": "~2.0"
+    },
+    "require-dev": {
+        "omnipay/tests": "~2.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}
