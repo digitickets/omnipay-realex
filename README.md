@@ -1,6 +1,6 @@
 # Omnipay: Realex
 
-**Realex driver for the Omnipay PHP payment processing library**
+**Realex driver with 3D Secure support for Omnipay payment processing library**
 
 [![Build Status](https://travis-ci.org/coatesap/omnipay-realex.png?branch=master)](https://travis-ci.org/coatesap/omnipay-realex)
 [![Latest Stable Version](https://poser.pugx.org/coatesap/omnipay-realex/version.png)](https://packagist.org/packages/coatesap/omnipay-realex)
