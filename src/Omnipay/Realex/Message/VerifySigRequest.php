@@ -57,9 +57,9 @@ class VerifySigRequest extends RemoteAbstractRequest
         $cardNumber = $this->getCard()->getNumber();
         $secret = $this->getSecret();
         $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
-        $md5hash = md5($tmp);
-        $tmp2 = "$md5hash.$secret";
-        $md5hash = md5($tmp2);
+        $sha1hash = sha1($tmp);
+        $tmp2 = "$sha1hash.$secret";
+        $sha1hash = sha1($tmp2);
 
         $domTree = new \DOMDocument('1.0', 'UTF-8');
 
@@ -111,8 +111,8 @@ class VerifySigRequest extends RemoteAbstractRequest
         $paResEl = $domTree->createElement('pares', $paRes);
         $root->appendChild($paResEl);
 
-        $md5El = $domTree->createElement('md5hash', $md5hash);
-        $root->appendChild($md5El);
+        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
+        $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);
 
