@@ -17,7 +17,7 @@ to your `composer.json` file:
 ```json
 {
     "require": {
-        "coatesap/omnipay-realex": "~2.0"
+        "coatesap/omnipay-realex": "~2.1"
     }
 }
 ```
