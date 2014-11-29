@@ -24,7 +24,7 @@ class AuthResponse extends RemoteAbstractResponse implements RedirectResponseInt
 
     public function getTransactionReference()
     {
-        return ($this->xml->pasref) ? $this->xml->pasref : null;
+        return ($this->xml->pasref) ? (string)$this->xml->pasref : null;
     }
 
     public function isRedirect()
