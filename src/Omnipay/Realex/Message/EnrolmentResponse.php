@@ -51,7 +51,7 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
 
     public function getRedirectUrl()
     {
-        return $this->xml->url;
+        return (string)$this->xml->url;
     }
 
     public function getRedirectMethod()
