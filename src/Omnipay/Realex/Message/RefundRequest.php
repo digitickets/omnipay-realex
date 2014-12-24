@@ -5,9 +5,9 @@ namespace Omnipay\Realex\Message;
 use Omnipay\Common\Message\AbstractRequest;
 
 /**
- * Realex Rebate Request
+ * Realex Refund Request
  */
-class RebateRequest extends RemoteAbstractRequest
+class RefundRequest extends RemoteAbstractRequest
 {
     protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
@@ -112,7 +112,7 @@ class RebateRequest extends RemoteAbstractRequest
 
     protected function createResponse($data)
     {
-        return $this->response = new RebateResponse($this, $data);
+        return $this->response = new RefundResponse($this, $data);
     }
 
     public function getEndpoint()
