@@ -39,7 +39,7 @@ repository.
 ## 3D Secure
 
 The Realex driver has 3D Secure checking turned off by default.
-To enable 3D Secure, make sure you have received a 3D Secure account reference from Realex, then set the '3dSecure' parameter as '1' when you initialise the gateway.
+To enable 3D Secure, make sure you have received a 3D Secure account reference from Realex, then set the `3dSecure` parameter as '1' when you initialise the gateway.
 
 ## Refunds
 
