@@ -1,7 +1,7 @@
 {
     "name": "coatesap/omnipay-realex",
     "type": "library",
-    "description": "Realex driver with 3D Secure support for Omnipay payment processing library",
+    "description": "Realex driver with 3D Secure & refund support for Omnipay payment processing library",
     "keywords": [
         "gateway",
         "merchant",
