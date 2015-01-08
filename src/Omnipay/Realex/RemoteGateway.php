@@ -64,6 +64,14 @@ class RemoteGateway extends AbstractGateway
         return $this->getParameter('refundPassword');
     }
 
+    /**
+     * Although Omnipay terminology deals with 'refunds', you need
+     * to actually supply the 'rebate' password that Realex gives you
+     * in order for this to work.
+     *
+     * @param string $value The 'rebate' password supplied by Realex
+     * @return $this
+     */
     public function setRefundPassword($value)
     {
         return $this->setParameter('refundPassword', $value);
