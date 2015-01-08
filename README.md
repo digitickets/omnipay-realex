@@ -17,7 +17,7 @@ to your `composer.json` file:
 ```json
 {
     "require": {
-        "coatesap/omnipay-realex": "~2.1"
+        "coatesap/omnipay-realex": "~3.0"
     }
 }
 ```
@@ -43,4 +43,4 @@ To enable 3D Secure, make sure you have received a 3D Secure account reference f
 
 ## Refunds
 
-In order to process a refund, you must configure the gateway with the 'refundPassword' parameter set to the 'rebate' password that Realex provide you with. In addition, you will need to pass the following parameters, relating to the original transaction: amount, transactionReference, transactionId, currency, authCode.
+In order to process a refund, you must configure the gateway with the `refundPassword` parameter set to the 'rebate' password that Realex provide you with. In addition, you will need to pass the following parameters, relating to the original transaction: `amount`, `transactionReference`, `transactionId`, `currency`, `authCode`.
