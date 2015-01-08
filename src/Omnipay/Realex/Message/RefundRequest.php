@@ -13,12 +13,12 @@ class RefundRequest extends RemoteAbstractRequest
 
     public function getTransactionReference()
     {
-        return $this->getParameter('pasRef');
+        return $this->getParameter('transactionReference');
     }
 
     public function setTransactionReference($value)
     {
-        return $this->setParameter('pasRef', $value);
+        return $this->setParameter('transactionReference', $value);
     }
 
     public function getAuthCode()
@@ -48,7 +48,7 @@ class RefundRequest extends RemoteAbstractRequest
      */
     public function getData()
     {
-        $this->validate('amount', 'currency', 'transactionId');
+        $this->validate('amount', 'currency', 'transactionId', 'transactionReference', 'authCode', 'refundPassword');
 
         // Create the hash
         $timestamp = strftime("%Y%m%d%H%M%S");
