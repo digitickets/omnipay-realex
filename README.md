@@ -36,7 +36,11 @@ The following gateways are provided by this package:
 For general usage instructions, please see the main [Omnipay](https://github.com/omnipay/omnipay)
 repository.
 
-## Driver-specific Usage
+## 3D Secure
 
 The Realex driver has 3D Secure checking turned off by default.
 To enable 3D Secure, make sure you have received a 3D Secure account reference from Realex, then set the '3dSecure' parameter as '1' when you initialise the gateway.
+
+## Refunds
+
+In order to process a refund, you must configure the gateway with the 'refundPassword' parameter set to the 'rebate' password that Realex provide you with. In addition, you will need to pass the following parameters, relating to the original transaction: amount, transactionReference, transactionId, currency, authCode.
