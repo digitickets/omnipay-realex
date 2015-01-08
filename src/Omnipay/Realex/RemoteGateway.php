@@ -59,6 +59,16 @@ class RemoteGateway extends AbstractGateway
         return $this->setParameter('secret', $value);
     }
 
+    public function getRefundPassword()
+    {
+        return $this->getParameter('refundPassword');
+    }
+
+    public function setRefundPassword($value)
+    {
+        return $this->setParameter('refundPassword', $value);
+    }
+
     public function get3dSecure()
     {
         return $this->getParameter('3dSecure');
