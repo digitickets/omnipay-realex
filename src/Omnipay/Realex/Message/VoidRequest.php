@@ -92,7 +92,7 @@ class VoidRequest extends RemoteAbstractRequest
 
     protected function createResponse($data)
     {
-        return $this->response = new RebateResponse($this, $data);
+        return $this->response = new VoidResponse($this, $data);
     }
 
     public function getEndpoint()
