@@ -117,6 +117,6 @@ class RemoteGateway extends AbstractGateway
 
     public function fetchTransaction(array $parameters = array())
     {
-        return $this->createRequest('\Omnipay\Relex\Message\FetchTransactionRequest', $parameters);
+        return $this->createRequest('\Omnipay\Realex\Message\FetchTransactionRequest', $parameters);
     }
 }
