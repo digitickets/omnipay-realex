@@ -57,6 +57,11 @@ class VerifySigResponse extends RemoteAbstractResponse implements RedirectRespon
         return $message;
     }
 
+    public function getTransactionId()
+    {
+        return ($this->xml->orderid) ? (string)$this->xml->orderid : null;
+    }
+
     public function getTransactionReference()
     {
         return ($this->xml->pasref) ? $this->xml->pasref : null;
