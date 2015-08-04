@@ -70,6 +70,7 @@ class RemoteGateway extends AbstractGateway
      * in order for this to work.
      *
      * @param string $value The 'rebate' password supplied by Realex
+     *
      * @return $this
      */
     public function setRefundPassword($value)
@@ -89,7 +90,9 @@ class RemoteGateway extends AbstractGateway
 
     public function purchase(array $parameters = array())
     {
-        if ($this->get3dSecure()) {
+        if (array_key_exists('cardReference', $parameters)) {
+            return $this->createRequest('\Omnipay\Realex\Message\SavedAuthRequest', $parameters);
+        } elseif ($this->get3dSecure()) {
             return $this->createRequest('\Omnipay\Realex\Message\EnrolmentRequest', $parameters);
         } else {
             return $this->createRequest('\Omnipay\Realex\Message\AuthRequest', $parameters);
@@ -109,7 +112,7 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->createRequest('\Omnipay\Realex\Message\RefundRequest', $parameters);
     }
-    
+
     public function void(array $parameters = array())
     {
         return $this->createRequest('\Omnipay\Realex\Message\VoidRequest', $parameters);
@@ -118,5 +121,33 @@ class RemoteGateway extends AbstractGateway
     public function fetchTransaction(array $parameters = array())
     {
         return $this->createRequest('\Omnipay\Realex\Message\FetchTransactionRequest', $parameters);
+    }
+
+    /**
+     * Create/update/delete card/customer details
+     */
+    public function createCard(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Realex\Message\CreateCardRequest', $parameters);
+    }
+
+    public function updateCard(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Realex\Message\UpdateCardRequest', $parameters);
+    }
+
+    public function deleteCard(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Realex\Message\DeleteCardRequest', $parameters);
+    }
+
+    public function createCustomer(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Realex\Message\CreateCustomerRequest', $parameters);
+    }
+
+    public function updateCustomer(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Realex\Message\UpdateCustomerRequest', $parameters);
     }
 }
