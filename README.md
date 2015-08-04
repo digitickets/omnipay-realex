@@ -44,3 +44,20 @@ To enable 3D Secure, make sure you have received a 3D Secure account reference f
 ## Refunds
 
 In order to process a refund, you must configure the gateway with the `refundPassword` parameter set to the 'rebate' password that Realex provide you with. In addition, you will need to pass the following parameters, relating to the original transaction: `amount`, `transactionReference`, `transactionId`, `currency`, `authCode`.
+
+## Saved Cards
+
+To save a card, you need to supply the `customerRef` and `cardReference` parameters. If the customer reference doesn't exist on Realex (you can check this with `$response->customerDoesntExist()` ), you must create the customer using `$gateway->createCustomer()`. Once the customer & card is setup, you can authorise a payment by supplying the card reference & customer reference instead of the card details:
+
+```php
+$gateway->purchase(
+    [
+        'transactionId' => $transactionId,
+        'customerRef'   => $customerRef,
+        'amount'        => $amount,
+        'currency'      => $currency,
+        'cardReference' => $cardRef,
+        'card'          => ['cvv' => $cvv]
+    ]
+);
+```
