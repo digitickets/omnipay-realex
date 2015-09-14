@@ -31,6 +31,16 @@ class RefundRequest extends RemoteAbstractRequest
         return $this->setParameter('authCode', $value);
     }
 
+    public function getOriginalTransactionId()
+    {
+        return $this->getParameter('originalTransactionId');
+    }
+
+    public function setOriginalTransactionId($value)
+    {
+        return $this->setParameter('originalTransactionId', $value);
+    }
+
     public function getRefundPassword()
     {
         return $this->getParameter('refundPassword');
@@ -48,18 +58,26 @@ class RefundRequest extends RemoteAbstractRequest
      */
     public function getData()
     {
-        $this->validate('amount', 'currency', 'transactionId', 'transactionReference', 'authCode', 'refundPassword');
+        $this->validate(
+            'amount',
+            'currency',
+            'originalTransactionId',
+            'transactionReference',
+            'authCode',
+            'refundPassword'
+        );
 
         // Create the hash
         $timestamp = strftime("%Y%m%d%H%M%S");
         $merchantId = $this->getMerchantId();
-        $orderId = $this->getTransactionId();
+        $originalTransactionId = $this->getOriginalTransactionId();
         $amount = $this->getAmountInteger();
         $currency = $this->getCurrency();
         // No card number for rebate requests but still needs to be in hash
         $cardNumber = '';
         $secret = $this->getSecret();
-        $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
+        $tmp
+            = "$timestamp.$merchantId.$originalTransactionId.$amount.$currency.$cardNumber";
         $sha1hash = sha1($tmp);
         $tmp2 = "$sha1hash.$secret";
         $sha1hash = sha1($tmp2);
@@ -80,12 +98,15 @@ class RefundRequest extends RemoteAbstractRequest
         $accountEl = $domTree->createElement('account', $this->getAccount());
         $root->appendChild($accountEl);
 
-        // original order ID
-        $orderIdEl = $domTree->createElement('orderid', $orderId);
+        // the ID of the original transaction (confusingly in a tag called 'orderid')
+        $orderIdEl = $domTree->createElement('orderid', $originalTransactionId);
         $root->appendChild($orderIdEl);
 
-        // pasref returned for original transaction
-        $pasRefEl = $domTree->createElement('pasref', $this->getTransactionReference());
+        // pasref for the original transaction
+        $pasRefEl = $domTree->createElement(
+            'pasref',
+            $this->getTransactionReference()
+        );
         $root->appendChild($pasRefEl);
 
         // authcode returned for original transaction
