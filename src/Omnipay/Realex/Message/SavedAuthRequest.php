@@ -143,7 +143,6 @@ class SavedAuthRequest extends RemoteAbstractRequest
         $root->appendChild($tssEl);
 
         $xmlString = $domTree->saveXML($root);
-        var_dump($xmlString);
 
         return $xmlString;
     }
