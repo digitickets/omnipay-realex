@@ -37,6 +37,11 @@ class AuthResponse extends RemoteAbstractResponse implements RedirectResponseInt
         return ($this->xml->authcode) ? (string)$this->xml->authcode : null;
     }
 
+    public function getBatchId()
+    {
+        return ($this->xml->batchid) ? (string)$this->xml->batchid : null;
+    }
+
     public function isRedirect()
     {
         return false;
