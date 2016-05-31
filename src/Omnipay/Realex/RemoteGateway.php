@@ -154,22 +154,28 @@ class RemoteGateway extends AbstractGateway
     /** 
      * Setup service endpoint links for different realex service providers
      */
-    public function setAuthEndpoint($value){
+    public function setAuthEndpoint($value)
+    {
         return $this->setParameter('AuthEndpoint', $value);
     }
-    public function getAuthEndpoint(){
+    public function getAuthEndpoint()
+    {
         return $this->getParameter('AuthEndpoint');
     }
-    public function setSecureDataVaultEndpoint($value){
+    public function setSecureDataVaultEndpoint($value)
+    {
         return $this->setParameter('SecureDataVaultEndpoint', $value);
     }
-    public function getSecureDataVaultEndpoint(){
+    public function getSecureDataVaultEndpoint()
+    {
         return $this->getParameter('SecureDataVaultEndpoint');
     }
-    public function set3DSecureEndpoint($value){
+    public function set3DSecureEndpoint($value)
+    {
         return $this->setParameter('3DSecureEndpoint', $value);
     }
-    public function get3DSecureEndpoint(){
+    public function get3DSecureEndpoint()
+    {
         return $this->getParameter('3DSecureEndpoint');
     }
 
