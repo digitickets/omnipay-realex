@@ -8,7 +8,7 @@ namespace Omnipay\Realex\Message;
 
 class CreateCustomerRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote-plugins.cgi';
+//    protected $endpoint = 'https://epage.payandshop.com/epage-remote-plugins.cgi';
 
     public function getCustomerRef()
     {
@@ -119,6 +119,10 @@ class CreateCustomerRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+            return $this->getParameter('AuthEndpoint');
+    }
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('AuthEndpoint', $value);
     }
 }

@@ -9,7 +9,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class RefundRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
     public function getTransactionReference()
     {
@@ -138,6 +137,10 @@ class RefundRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('AuthEndpoint');
+    }
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('AuthEndpoint', $value);
     }
 }

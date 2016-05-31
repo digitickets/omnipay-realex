@@ -9,8 +9,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class VoidRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
-
     public function getTransactionReference()
     {
         return $this->getParameter('pasRef');
@@ -97,6 +95,10 @@ class VoidRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('SecureDataVaultEndpoint');
+    }
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('SecureDataVaultEndpoint', $value);
     }
 }

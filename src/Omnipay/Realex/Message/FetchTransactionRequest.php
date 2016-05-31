@@ -9,7 +9,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class FetchTransactionRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
     /**
      * Get the XML registration string to be sent to the gateway
@@ -69,6 +68,10 @@ class FetchTransactionRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('3DSecureEndpoint');
+    }
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('3DSecureEndpoint', $value);
     }
 }

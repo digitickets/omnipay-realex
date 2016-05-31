@@ -11,9 +11,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class VerifySigRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
-
-
     /**
      * Decode our previously-encoded Merchant Data
      *
@@ -126,7 +123,11 @@ class VerifySigRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('SecureDataVaultEndpoint');
+    }
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('SecureDataVaultEndpoint', $value);
     }
 
     /**
