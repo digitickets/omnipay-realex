@@ -158,25 +158,29 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->setParameter('AuthEndpoint', $value);
     }
+    
     public function getAuthEndpoint()
     {
         return $this->getParameter('AuthEndpoint');
     }
+    
     public function setSecureDataVaultEndpoint($value)
     {
         return $this->setParameter('SecureDataVaultEndpoint', $value);
     }
+    
     public function getSecureDataVaultEndpoint()
     {
         return $this->getParameter('SecureDataVaultEndpoint');
     }
+    
     public function set3DSecureEndpoint($value)
     {
         return $this->setParameter('3DSecureEndpoint', $value);
     }
+    
     public function get3DSecureEndpoint()
     {
         return $this->getParameter('3DSecureEndpoint');
     }
-
 }
