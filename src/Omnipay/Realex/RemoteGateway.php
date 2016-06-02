@@ -25,7 +25,10 @@ class RemoteGateway extends AbstractGateway
             'merchantId' => '',
             'account'    => '',
             'secret'     => '',
-            '3dSecure'   => 0
+            '3dSecure'   => 0,
+            'authEndpoint'=>'https://epage.payandshop.com/epage-remote.cgi',
+            'secureDataVaultEndpoint'=>'https://epage.payandshop.com/epage-remote-plugins.cgi',
+            '3DSecureEndpoint'=>'https://epage.payandshop.com/epage-3dsecure.cgi'
         );
     }
 
