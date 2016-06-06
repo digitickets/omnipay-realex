@@ -28,7 +28,7 @@ class RemoteGateway extends AbstractGateway
             '3dSecure'   => 0,
             'authEndpoint'=>'https://epage.payandshop.com/epage-remote.cgi',
             'secureDataVaultEndpoint'=>'https://epage.payandshop.com/epage-remote-plugins.cgi',
-            '3DSecureEndpoint'=>'https://epage.payandshop.com/epage-3dsecure.cgi'
+            '3dSecureEndpoint'=>'https://epage.payandshop.com/epage-3dsecure.cgi'
         );
     }
 
@@ -179,11 +179,11 @@ class RemoteGateway extends AbstractGateway
     
     public function set3DSecureEndpoint($value)
     {
-        return $this->setParameter('3DSecureEndpoint', $value);
+        return $this->setParameter('3dSecureEndpoint', $value);
     }
     
     public function get3DSecureEndpoint()
     {
-        return $this->getParameter('3DSecureEndpoint');
+        return $this->getParameter('3dSecureEndpoint');
     }
 }

@@ -10,7 +10,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class AuthRequest extends RemoteAbstractRequest
 {
-//    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
     public function getCavv()
     {

@@ -68,10 +68,10 @@ class FetchTransactionRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->getParameter('3DSecureEndpoint');
+        return $this->getParameter('3dSecureEndpoint');
     }
     public function setAuthEndpoint($value)
     {
-        return $this->setParameter('3DSecureEndpoint', $value);
+        return $this->setParameter('3dSecureEndpoint', $value);
     }
 }

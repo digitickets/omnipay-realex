@@ -70,7 +70,7 @@ class DeleteCardRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-            return $this->getParameter('AuthEndpoint');
+        return $this->getParameter('AuthEndpoint');
     }
     public function setAuthEndpoint($value)
     {

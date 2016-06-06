@@ -9,7 +9,6 @@ use Omnipay\Common\Exception\InvalidRequestException;
  */
 class EnrolmentRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-3dsecure.cgi';
 
     /**
      * Get the XML registration string to be sent to the gateway
@@ -122,10 +121,10 @@ class EnrolmentRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->getParameter('3DSecureEndpoint');
+        return $this->getParameter('3dSecureEndpoint');
     }
     public function setAuthEndpoint($value)
     {
-        return $this->setParameter('3DSecureEndpoint', $value);
+        return $this->setParameter('3dSecureEndpoint', $value);
     }
 }
