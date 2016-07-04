@@ -150,4 +150,12 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->createRequest('\Omnipay\Realex\Message\UpdateCustomerRequest', $parameters);
     }
+
+    /**
+     * Allow the user to set the endpoint
+     */
+    public function setEndpoint($value)
+    {
+      return $this->setParameter('endpoint', $value);
+    }
 }
