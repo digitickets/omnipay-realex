@@ -42,20 +42,24 @@ class DeleteCardRequest extends RemoteAbstractRequest
         $root = $domTree->appendChild($root);
 
         // merchant ID
-        $merchantEl = $domTree->createElement('merchantid', $merchantId);
+        $merchantEl = $domTree->createElement('merchantid');
+		$merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         $cardEl = $domTree->createElement('card');
 
-        $cardRefEl = $domTree->createElement('ref', $this->getCardReference());
+        $cardRefEl = $domTree->createElement('ref');
+		$cardRefEl->appendChild($domTree->createTextNode($this->getCardReference()));
         $cardEl->appendChild($cardRefEl);
 
-        $payerRefEl = $domTree->createElement('payerref', $this->getCustomerRef());
+        $payerRefEl = $domTree->createElement('payerref');
+		$payerRefEl->appendChild($domTree->createTextNode( $this->getCustomerRef()));
         $cardEl->appendChild($payerRefEl);
 
         $root->appendChild($cardEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
+        $sha1El = $domTree->createElement('sha1hash');
+		$sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);

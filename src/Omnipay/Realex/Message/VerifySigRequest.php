@@ -67,19 +67,23 @@ class VerifySigRequest extends RemoteAbstractRequest
         $root = $domTree->appendChild($root);
 
         // merchant ID
-        $merchantEl = $domTree->createElement('merchantid', $merchantId);
+        $merchantEl = $domTree->createElement('merchantid');
+		$merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // account
-        $merchantEl = $domTree->createElement('account', $this->getAccount());
+        $merchantEl = $domTree->createElement('account');
+		$merchantEl->appendChild($domTree->createTextNode($this->getAccount()));
         $root->appendChild($merchantEl);
 
         // order ID
-        $merchantEl = $domTree->createElement('orderid', $orderId);
+        $merchantEl = $domTree->createElement('orderid');
+		$merchantEl->appendChild($domTree->createTextNode($orderId));
         $root->appendChild($merchantEl);
 
         // amount
-        $amountEl = $domTree->createElement('amount', $amount);
+        $amountEl = $domTree->createElement('amount');
+		$amountEl->appendChild($domTree->createTextNode($amount));
         $amountEl->setAttribute('currency', $this->getCurrency());
         $root->appendChild($amountEl);
 
@@ -91,24 +95,30 @@ class VerifySigRequest extends RemoteAbstractRequest
         // Card details
         $cardEl = $domTree->createElement('card');
 
-        $cardNumberEl = $domTree->createElement('number', $card->getNumber());
+        $cardNumberEl = $domTree->createElement('number');
+		$cardNumberEl->appendChild($domTree->createTextNode($card->getNumber()));
         $cardEl->appendChild($cardNumberEl);
 
-        $expiryEl = $domTree->createElement('expdate', $card->getExpiryDate("my")); // mmyy
+        $expiryEl = $domTree->createElement('expdate'); // mmyy
+		$expiryEl->appendChild($domTree->createTextNode($card->getExpiryDate("my")));
         $cardEl->appendChild($expiryEl);
 
-        $cardTypeEl = $domTree->createElement('type', $this->getCardBrand());
+        $cardTypeEl = $domTree->createElement('type');
+		$cardTypeEl->appendChild($domTree->createTextNode($this->getCardBrand()));
         $cardEl->appendChild($cardTypeEl);
 
-        $cardNameEl = $domTree->createElement('chname', $card->getBillingName());
+        $cardNameEl = $domTree->createElement('chname');
+		$cardNameEl->appendChild($domTree->createTextNode($card->getBillingName()));
         $cardEl->appendChild($cardNameEl);
 
         $root->appendChild($cardEl);
 
-        $paResEl = $domTree->createElement('pares', $paRes);
+        $paResEl = $domTree->createElement('pares');
+		$paResEl->appendChild($domTree->createTextNode($paRes));
         $root->appendChild($paResEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
+        $sha1El = $domTree->createElement('sha1hash');
+		$sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);
