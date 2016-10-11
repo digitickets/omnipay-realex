@@ -53,7 +53,7 @@ class DeleteCardRequest extends RemoteAbstractRequest
         $cardEl->appendChild($cardRefEl);
 
         $payerRefEl = $domTree->createElement('payerref');
-        $payerRefEl->appendChild($domTree->createTextNode( $this->getCustomerRef()));
+        $payerRefEl->appendChild($domTree->createTextNode($this->getCustomerRef()));
         $cardEl->appendChild($payerRefEl);
 
         $root->appendChild($cardEl);

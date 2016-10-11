@@ -42,12 +42,12 @@ class UpdateCustomerRequest extends RemoteAbstractRequest
         $root = $domTree->appendChild($root);
 
         // merchant ID
-        $merchantEl = $domTree->createElement('merchantid' );
+        $merchantEl = $domTree->createElement('merchantid');
         $merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // order ID
-        $merchantEl = $domTree->createElement('orderid' );
+        $merchantEl = $domTree->createElement('orderid');
         $merchantEl->appendChild($domTree->createTextNode($orderId));
         $root->appendChild($merchantEl);
 

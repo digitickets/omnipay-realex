@@ -109,7 +109,7 @@ class AuthRequest extends RemoteAbstractRequest
         $cardEl->appendChild($expiryEl);
 
         $cardTypeEl = $domTree->createElement('type');
-        $cardTypeEl->appendChild($domTree->createTextNode($this->getCardBrand()));        
+        $cardTypeEl->appendChild($domTree->createTextNode($this->getCardBrand()));
         $cardEl->appendChild($cardTypeEl);
 
         $cardNameEl = $domTree->createElement('chname');
