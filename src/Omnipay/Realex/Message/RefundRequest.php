@@ -91,43 +91,43 @@ class RefundRequest extends RemoteAbstractRequest
 
         // merchant ID
         $merchantEl = $domTree->createElement('merchantid');
-		$merchantEl->appendChild($domTree->createTextNode($merchantId));
+        $merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // account
         $accountEl = $domTree->createElement('account');
-		$accountEl->appendChild($domTree->createTextNode($this->getAccount()));
+        $accountEl->appendChild($domTree->createTextNode($this->getAccount()));
         $root->appendChild($accountEl);
 
         // the ID of the original transaction (confusingly in a tag called 'orderid')
         $orderIdEl = $domTree->createElement('orderid');
-		$orderIdEl->appendChild($domTree->createTextNode($originalTransactionId));
+        $orderIdEl->appendChild($domTree->createTextNode($originalTransactionId));
         $root->appendChild($orderIdEl);
 
         // pasref for the original transaction
         $pasRefEl = $domTree->createElement('pasref');
-		$pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
+        $pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
         $root->appendChild($pasRefEl);
 
         // authcode returned for original transaction
         $authCodeEl = $domTree->createElement('authcode');
-		$authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
+        $authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
         $root->appendChild($authCodeEl);
 
         // amount
         $amountEl = $domTree->createElement('amount');
-		$amountEl->appendChild($domTree->createTextNode($amount));
+        $amountEl->appendChild($domTree->createTextNode($amount));
         $amountEl->setAttribute('currency', $this->getCurrency());
         $root->appendChild($amountEl);
 
         // refund hash
         $refundHash = sha1($this->getRefundPassword());
         $refundHashEl = $domTree->createElement('refundhash');
-		$refundHashEl->appendChild($domTree->createTextNode($refundHash));
+        $refundHashEl->appendChild($domTree->createTextNode($refundHash));
         $root->appendChild($refundHashEl);
 
         $sha1El = $domTree->createElement('sha1hash');
-		$sha1El->appendChild($domTree->createTextNode($sha1hash));
+        $sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);

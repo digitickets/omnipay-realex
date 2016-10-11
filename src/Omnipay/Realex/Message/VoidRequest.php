@@ -62,31 +62,31 @@ class VoidRequest extends RemoteAbstractRequest
 
         // merchant ID
         $merchantEl = $domTree->createElement('merchantid');
-		$merchantEl->appendChild($domTree->createTextNode($merchantId));
+        $merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // account
         $accountEl = $domTree->createElement('account');
-		$accountEl->appendChild($domTree->createTextNode($this->getAccount()));
+        $accountEl->appendChild($domTree->createTextNode($this->getAccount()));
         $root->appendChild($accountEl);
 
         // original order ID
         $orderIdEl = $domTree->createElement('orderid');
-		$orderIdEl->appendChild($domTree->createTextNode($orderId));
+        $orderIdEl->appendChild($domTree->createTextNode($orderId));
         $root->appendChild($orderIdEl);
 
         // pasref returned for original transaction
         $pasRefEl = $domTree->createElement('pasref');
-		$pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
+        $pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
         $root->appendChild($pasRefEl);
 
         // authcode returned for original transaction
         $authCodeEl = $domTree->createElement('authcode');
-		$authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
+        $authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
         $root->appendChild($authCodeEl);
 
         $sha1El = $domTree->createElement('sha1hash');
-		$sha1El->appendChild($domTree->createTextNode($sha1hash));
+        $sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);
