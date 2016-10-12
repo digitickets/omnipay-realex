@@ -101,9 +101,9 @@ class SavedAuthRequest extends RemoteAbstractRequest
         $root->appendChild($merchantEl);
 
         // amount
-        $amountEl = $domTree->createElement('amount', $amount);
-        $amountEl->setAttribute('currency');
-        $amountEl->appendChild($domTree->createTextNode($this->getCurrency()));
+        $amountEl = $domTree->createElement('amount');
+        $amountEl->setAttribute('currency',$this->getCurrency());
+        $amountEl->appendChild($domTree->createTextNode($amount));
         $root->appendChild($amountEl);
 
         $paymentDataEl = $domTree->createElement('paymentdata');
