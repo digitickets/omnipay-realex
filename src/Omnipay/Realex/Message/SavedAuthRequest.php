@@ -102,7 +102,7 @@ class SavedAuthRequest extends RemoteAbstractRequest
 
         // amount
         $amountEl = $domTree->createElement('amount');
-        $amountEl->setAttribute('currency',$this->getCurrency());
+        $amountEl->setAttribute('currency', $this->getCurrency());
         $amountEl->appendChild($domTree->createTextNode($amount));
         $root->appendChild($amountEl);
 
