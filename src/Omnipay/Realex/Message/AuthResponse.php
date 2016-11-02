@@ -17,6 +17,21 @@ class AuthResponse extends RemoteAbstractResponse implements RedirectResponseInt
         return ($this->xml->result == '00');
     }
 
+    public function isDecline()
+    {
+        return (substr($this->xml->result, 0, 1) == '1');
+    }
+
+    public function isBankSystemError()
+    {
+        return (substr($this->xml->result, 0, 1) == '2');
+    }
+
+    public function isRealexSystemError()
+    {
+        return (substr($this->xml->result, 0, 1) == '3');
+    }
+
     public function getMessage()
     {
         return (string)$this->xml->message;
