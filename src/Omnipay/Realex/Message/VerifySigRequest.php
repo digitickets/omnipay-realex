@@ -169,7 +169,7 @@ class VerifySigRequest extends RemoteAbstractRequest
          * @var VerifySigResponse $response
          */
         $response = parent::sendData($parameters);
-dump($response);
+
         if ($response->isSuccessful()) {
 
             // a few additional parameters that need to be passed for 3D-Secure transactions
@@ -189,7 +189,7 @@ dump($response);
 
             $response = $request->send();
         }
-        dump($response);
+
         return $response;
     }
 }
