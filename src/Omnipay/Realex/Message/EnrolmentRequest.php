@@ -11,6 +11,26 @@ class EnrolmentRequest extends RemoteAbstractRequest
 {
     protected $endpoint = 'https://epage.payandshop.com/epage-3dsecure.cgi';
 
+    public function getComments()
+    {
+        return $this->getParameter('comments');
+    }
+
+    public function setComments(array $comments)
+    {
+        return $this->setParameter('comments', $comments);
+    }
+
+    public function getProdId()
+    {
+        return $this->getParameter('prodid');
+    }
+
+    public function setProdId($prodid)
+    {
+        return $this->setParameter('prodid', $prodid);
+    }
+
     /**
      * Get the XML registration string to be sent to the gateway
      *

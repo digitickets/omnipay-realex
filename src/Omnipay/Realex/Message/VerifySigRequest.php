@@ -13,6 +13,15 @@ class VerifySigRequest extends RemoteAbstractRequest
 {
     protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
+    public function getComments()
+    {
+        return $this->getParameter('comments');
+    }
+
+    public function setComments(array $comments)
+    {
+        return $this->setParameter('comments', $comments);
+    }
 
     /**
      * Decode our previously-encoded Merchant Data

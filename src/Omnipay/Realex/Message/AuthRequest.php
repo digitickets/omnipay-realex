@@ -22,6 +22,26 @@ class AuthRequest extends RemoteAbstractRequest
         return $this->setParameter('cavv', $value);
     }
 
+    public function getComments()
+    {
+        return $this->getParameter('comments');
+    }
+
+    public function setComments(array $comments)
+    {
+        return $this->setParameter('comments', $comments);
+    }
+
+    public function getProdId()
+    {
+        return $this->getParameter('prodid');
+    }
+
+    public function setProdId($prodid)
+    {
+        return $this->setParameter('prodid', $prodid);
+    }
+
     public function getEci()
     {
         return $this->getParameter('eci');
@@ -141,6 +161,26 @@ class AuthRequest extends RemoteAbstractRequest
         $sha1El = $domTree->createElement('sha1hash', $sha1hash);
         $root->appendChild($sha1El);
 
+        if ($this->getComments() && is_array($this->getComments())) {
+
+            $i = 1;
+
+            $commentsEl = $domTree->createElement('comments');
+
+            foreach ($this->getComments() as $comment) {
+
+                $commentEl = $domTree->createElement('comment', $comment);
+                $commentEl->setAttribute('id', $i);
+                $commentsEl->appendChild($commentEl);
+
+                $i++;
+
+            }
+
+            $root->appendChild($commentsEl);
+
+        }
+
         $tssEl = $domTree->createElement('tssinfo');
         $addressEl = $domTree->createElement('address');
         $addressEl->setAttribute('type', 'billing');
@@ -150,7 +190,8 @@ class AuthRequest extends RemoteAbstractRequest
         $root->appendChild($tssEl);
 
         $xmlString = $domTree->saveXML($root);
-
+        dump($this->getParameters());
+dump($xmlString);
         return $xmlString;
     }
 
