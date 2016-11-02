@@ -42,6 +42,16 @@ class AuthRequest extends RemoteAbstractRequest
         return $this->setParameter('prodid', $prodid);
     }
 
+    public function getVarRef()
+    {
+        return $this->getParameter('varref');
+    }
+
+    public function setVarRef($varref)
+    {
+        return $this->setParameter('varref', $varref);
+    }
+
     public function getEci()
     {
         return $this->getParameter('eci');
@@ -187,6 +197,17 @@ class AuthRequest extends RemoteAbstractRequest
         $countryEl = $domTree->createElement('country', $card->getBillingCountry());
         $addressEl->appendChild($countryEl);
         $tssEl->appendChild($addressEl);
+
+        if ($this->getProdId()) {
+            $prodIdEl = $domTree->createElement('prodid', $this->getProdId());
+            $tssEl->appendChild($prodIdEl);
+        }
+
+        if ($this->getVarRef()) {
+            $varRefEl = $domTree->createElement('varref', $this->getVarRef());
+            $tssEl->appendChild($varRefEl);
+        }
+
         $root->appendChild($tssEl);
 
         $xmlString = $domTree->saveXML($root);

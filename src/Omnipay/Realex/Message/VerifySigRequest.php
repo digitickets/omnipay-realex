@@ -23,6 +23,26 @@ class VerifySigRequest extends RemoteAbstractRequest
         return $this->setParameter('comments', $comments);
     }
 
+    public function getProdId()
+    {
+        return $this->getParameter('prodid');
+    }
+
+    public function setProdId($prodid)
+    {
+        return $this->setParameter('prodid', $prodid);
+    }
+
+    public function getVarRef()
+    {
+        return $this->getParameter('varref');
+    }
+
+    public function setVarRef($varref)
+    {
+        return $this->setParameter('varref', $varref);
+    }
+
     /**
      * Decode our previously-encoded Merchant Data
      *
@@ -149,7 +169,7 @@ class VerifySigRequest extends RemoteAbstractRequest
          * @var VerifySigResponse $response
          */
         $response = parent::sendData($parameters);
-
+dump($response);
         if ($response->isSuccessful()) {
 
             // a few additional parameters that need to be passed for 3D-Secure transactions
@@ -169,7 +189,7 @@ class VerifySigRequest extends RemoteAbstractRequest
 
             $response = $request->send();
         }
-
+        dump($response);
         return $response;
     }
 }
