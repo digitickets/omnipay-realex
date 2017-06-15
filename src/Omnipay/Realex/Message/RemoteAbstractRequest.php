@@ -80,6 +80,7 @@ abstract class RemoteAbstractRequest extends AbstractRequest
                 'CURLOPT_SSL_VERIFYPEER' => false
             )
         ));
+
         $httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data)->send();
 
         return $this->createResponse($httpResponse->getBody(true));

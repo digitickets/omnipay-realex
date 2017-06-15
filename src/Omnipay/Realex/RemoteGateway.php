@@ -93,6 +93,7 @@ class RemoteGateway extends AbstractGateway
 
     public function purchase(array $parameters = array())
     {
+		
         if (array_key_exists('cardReference', $parameters)) {
             return $this->createRequest('\Omnipay\Realex\Message\SavedAuthRequest', $parameters);
         } elseif ($this->get3dSecure()) {
@@ -159,22 +160,22 @@ class RemoteGateway extends AbstractGateway
      */
     public function setAuthEndpoint($value)
     {
-        return $this->setParameter('AuthEndpoint', $value);
+        return $this->setParameter('authEndpoint', $value);
     }
     
     public function getAuthEndpoint()
     {
-        return $this->getParameter('AuthEndpoint');
+        return $this->getParameter('authEndpoint');
     }
     
     public function setSecureDataVaultEndpoint($value)
     {
-        return $this->setParameter('SecureDataVaultEndpoint', $value);
+        return $this->setParameter('secureDataVaultEndpoint', $value);
     }
     
     public function getSecureDataVaultEndpoint()
     {
-        return $this->getParameter('SecureDataVaultEndpoint');
+        return $this->getParameter('secureDataVaultEndpoint');
     }
     
     public function set3DSecureEndpoint($value)

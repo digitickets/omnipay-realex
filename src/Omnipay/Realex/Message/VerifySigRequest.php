@@ -120,9 +120,9 @@ class VerifySigRequest extends RemoteAbstractRequest
         $sha1El = $domTree->createElement('sha1hash');
         $sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
-
+		
         $xmlString = $domTree->saveXML($root);
-
+	
         return $xmlString;
     }
 
@@ -133,11 +133,11 @@ class VerifySigRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->getParameter('SecureDataVaultEndpoint');
+        return $this->getParameter('authEndpoint');
     }
     public function setAuthEndpoint($value)
     {
-        return $this->setParameter('SecureDataVaultEndpoint', $value);
+        return $this->setParameter('authEndpoint', $value);
     }
 
     /**
@@ -151,15 +151,14 @@ class VerifySigRequest extends RemoteAbstractRequest
          * @var VerifySigResponse $response
          */
         $response = parent::sendData($parameters);
-
+	
         if ($response->isSuccessful()) {
-
             // a few additional parameters that need to be passed for 3D-Secure transactions
             $parameters = $this->getParameters();
             $parameters['cavv'] = $response->getParam('cavv');
             $parameters['eci'] = $response->getParam('eci');
             $parameters['xid'] = $response->getParam('xid');
-
+			
             /**
              * Now finally, do our authorisation
              *
@@ -168,10 +167,11 @@ class VerifySigRequest extends RemoteAbstractRequest
              */
             $request = new AuthRequest($this->httpClient, $this->httpRequest);
             $request->initialize($parameters);
-
+	
             $response = $request->send();
+			
         }
-
+		
         return $response;
     }
 }
