@@ -1,5 +1,5 @@
 {
-    "name": "coatesap/omnipay-realex",
+    "name": "digitickets/omnipay-realex",
     "type": "library",
     "description": "Realex driver with 3D Secure & refund support for Omnipay payment processing library",
     "keywords": [
@@ -11,7 +11,7 @@
         "purchase",
         "realex"
     ],
-    "homepage": "https://github.com/coatesap/omnipay-realex",
+    "homepage": "https://github.com/digitickets/omnipay-realex",
     "license": "MIT",
     "authors": [
         {
@@ -27,10 +27,5 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "~1.4.4"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.0.x-dev"
-        }
     }
 }
