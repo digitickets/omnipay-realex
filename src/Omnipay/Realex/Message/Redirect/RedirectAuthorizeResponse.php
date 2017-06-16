@@ -7,37 +7,30 @@ use Omnipay\Common\Message\RedirectResponseInterface;
 /**
  * Realex Redirect Authorize Response
  */
-class RedirectAuthorizeResponse extends Response implements RedirectResponseInterface
-{
+class RedirectAuthorizeResponse extends Response implements RedirectResponseInterface {
 
-    public function isSuccessful()
-    {
-        return false;
-    }
+	public function isSuccessful() {
+		return false;
+	}
 
-    public function isRedirect()
-    {
-        return true;
-    }
+	public function isRedirect() {
+		return true;
+	}
 
-     public function getRedirectUrl()
-    {
-		return	$this->getRequest()->getCheckoutEndpoint();
-    }
+	public function getRedirectUrl() {
+		return $this->getRequest()->getCheckoutEndpoint();
+	}
 
-    public function getTransactionReference()
-    {
-        return $this->getRequest()->getTransactionId();
-    }
+	public function getTransactionReference() {
+		return $this->getRequest()->getTransactionId();
+	}
 
-    public function getRedirectMethod()
-    {
-        return 'POST';
-    }
+	public function getRedirectMethod() {
+		return 'POST';
+	}
 
-    public function getRedirectData()
-    {
-        return $this->getRequest()->getBaseData(false);
-    }
+	public function getRedirectData() {
+		return $this->getRequest()->getBaseData(false);
+	}
 
 }

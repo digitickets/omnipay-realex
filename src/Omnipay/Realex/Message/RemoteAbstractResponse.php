@@ -11,29 +11,28 @@ use Omnipay\Common\Message\RequestInterface;
 /**
  * Realex Abstract Response
  */
-abstract class RemoteAbstractResponse extends AbstractResponse implements RedirectResponseInterface
-{
-    protected $xml;
+abstract class RemoteAbstractResponse extends AbstractResponse implements RedirectResponseInterface {
 
-    public function __construct(RequestInterface $request, $data)
-    {
-        parent::__construct($request, $data);
+	protected $xml;
 
-        $this->xml = $this->parseXml($data);
-    }
+	public function __construct(RequestInterface $request, $data) {
+		parent::__construct($request, $data);
 
-    /**
-     * Turn the raw XML response string into a SimpleXMLElement
-     *
-     * @param string $data
-     * @return \SimpleXMLElement
-     */
-    public function parseXml($data)
-    {
-        $data = str_replace('  ', ' ', $data);
-        $data = str_replace("\n", '', $data);
-        $data = str_replace("\r", '', $data);
+		$this->xml = $this->parseXml($data);
+	}
 
-        return new \SimpleXMLElement($data);
-    }
+	/**
+	 * Turn the raw XML response string into a SimpleXMLElement
+	 *
+	 * @param string $data
+	 * @return \SimpleXMLElement
+	 */
+	public function parseXml($data) {
+		$data = str_replace('  ', ' ', $data);
+		$data = str_replace("\n", '', $data);
+		$data = str_replace("\r", '', $data);
+
+		return new \SimpleXMLElement($data);
+	}
+
 }

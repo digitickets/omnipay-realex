@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Philip Wright- Christie <pwrightchristie.sfp@gmail.com>
  * Date: 04/08/15
@@ -6,38 +7,33 @@
 
 namespace Omnipay\Realex\Message;
 
-class UpdateCustomerResponse extends RemoteAbstractResponse
-{
-    public function isSuccessful()
-    {
-        return ($this->xml->result == '00');
-    }
+class UpdateCustomerResponse extends RemoteAbstractResponse {
 
-    public function getMessage()
-    {
-        return (string) $this->xml->message;
-    }
+	public function isSuccessful() {
+		return ($this->xml->result == '00');
+	}
 
-    public function isRedirect()
-    {
-        return false;
-    }
+	public function getMessage() {
+		return (string) $this->xml->message;
+	}
 
-    public function getRedirectMethod()
-    {
-        return 'GET';
-    }
+	public function isRedirect() {
+		return false;
+	}
 
-    public function getRedirectData()
-    {
-        return null;
-    }
+	public function getRedirectMethod() {
+		return 'GET';
+	}
 
-    /**
-     * Gets the redirect target url.
-     */
-    public function getRedirectUrl()
-    {
-        return '';
-    }
+	public function getRedirectData() {
+		return null;
+	}
+
+	/**
+	 * Gets the redirect target url.
+	 */
+	public function getRedirectUrl() {
+		return '';
+	}
+
 }

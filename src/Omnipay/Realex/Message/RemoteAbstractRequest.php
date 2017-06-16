@@ -8,85 +8,75 @@ use Omnipay\Common\Message\AbstractRequest;
 /**
  * Realex Purchase Request
  */
-abstract class RemoteAbstractRequest extends AbstractRequest
-{
-    protected $cardBrandMap = array(
-        'mastercard' => 'mc',
-        'diners_club' => 'diners'
-    );
+abstract class RemoteAbstractRequest extends AbstractRequest {
 
-    /**
-     * Override some of the default Omnipay card brand names
-     *
-     * @return mixed
-     */
-    protected function getCardBrand()
-    {
-        $brand = $this->getCard()->getBrand();
+	protected $cardBrandMap = array(
+		'mastercard' => 'mc',
+		'diners_club' => 'diners'
+	);
 
-        if (isset($this->cardBrandMap[$brand])) {
-            $brand = $this->cardBrandMap[$brand];
-        }
+	/**
+	 * Override some of the default Omnipay card brand names
+	 *
+	 * @return mixed
+	 */
+	protected function getCardBrand() {
+		$brand = $this->getCard()->getBrand();
 
-        return strtoupper($brand);
-    }
+		if (isset($this->cardBrandMap[$brand])) {
+			$brand = $this->cardBrandMap[$brand];
+		}
 
-    public function getMerchantId()
-    {
-        return $this->getParameter('merchantId');
-    }
+		return strtoupper($brand);
+	}
 
-    public function setMerchantId($value)
-    {
-        return $this->setParameter('merchantId', $value);
-    }
+	public function getMerchantId() {
+		return $this->getParameter('merchantId');
+	}
 
-    public function getAccount()
-    {
-        return $this->getParameter('account');
-    }
+	public function setMerchantId($value) {
+		return $this->setParameter('merchantId', $value);
+	}
 
-    public function setAccount($value)
-    {
-        return $this->setParameter('account', $value);
-    }
+	public function getAccount() {
+		return $this->getParameter('account');
+	}
 
-    public function getSecret()
-    {
-        return $this->getParameter('secret');
-    }
+	public function setAccount($value) {
+		return $this->setParameter('account', $value);
+	}
 
-    public function setSecret($value)
-    {
-        return $this->setParameter('secret', $value);
-    }
+	public function getSecret() {
+		return $this->getParameter('secret');
+	}
 
-    public function getReturnUrl()
-    {
-        return $this->getParameter('returnUrl');
-    }
+	public function setSecret($value) {
+		return $this->setParameter('secret', $value);
+	}
 
-    public function setReturnUrl($value)
-    {
-        return $this->setParameter('returnUrl', $value);
-    }
+	public function getReturnUrl() {
+		return $this->getParameter('returnUrl');
+	}
 
-    public function sendData($data)
-    {
-        // register the payment
-        $this->httpClient->setConfig(array(
-            'curl.options' => array(
-                'CURLOPT_SSLVERSION'     => 1,
-                'CURLOPT_SSL_VERIFYPEER' => false
-            )
-        ));
+	public function setReturnUrl($value) {
+		return $this->setParameter('returnUrl', $value);
+	}
 
-        $httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data)->send();
+	public function sendData($data) {
+		// register the payment
+		$this->httpClient->setConfig(array(
+			'curl.options' => array(
+				'CURLOPT_SSLVERSION' => 1,
+				'CURLOPT_SSL_VERIFYPEER' => false
+			)
+		));
 
-        return $this->createResponse($httpResponse->getBody(true));
-    }
+		$httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data)->send();
 
-    abstract public function getEndpoint();
+		return $this->createResponse($httpResponse->getBody(true));
+	}
 
-    abstract protected function createResponse($data);
+	abstract public function getEndpoint();
+
+	abstract protected function createResponse($data);
 }

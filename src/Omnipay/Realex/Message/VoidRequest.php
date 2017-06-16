@@ -7,104 +7,98 @@ use Omnipay\Common\Message\AbstractRequest;
 /**
  * Realex Void Request
  */
-class VoidRequest extends RemoteAbstractRequest
-{
-    public function getTransactionReference()
-    {
-        return $this->getParameter('pasRef');
-    }
+class VoidRequest extends RemoteAbstractRequest {
 
-    public function setTransactionReference($value)
-    {
-        return $this->setParameter('pasRef', $value);
-    }
+	public function getTransactionReference() {
+		return $this->getParameter('pasRef');
+	}
 
-    public function getAuthCode()
-    {
-        return $this->getParameter('authCode');
-    }
+	public function setTransactionReference($value) {
+		return $this->setParameter('pasRef', $value);
+	}
 
-    public function setAuthCode($value)
-    {
-        return $this->setParameter('authCode', $value);
-    }
+	public function getAuthCode() {
+		return $this->getParameter('authCode');
+	}
 
-    /**
-     * Get the XML registration string to be sent to the gateway
-     *
-     * @return string
-     */
-    public function getData()
-    {
-        $this->validate('transactionId');
+	public function setAuthCode($value) {
+		return $this->setParameter('authCode', $value);
+	}
 
-        // Create the hash
-        $timestamp = strftime("%Y%m%d%H%M%S");
-        $merchantId = $this->getMerchantId();
-        $orderId = $this->getTransactionId();
-        // No amount, currency or card number for rebate requests but still needs to be in hash
-        $amount = '';
-        $currency = '';
-        $cardNumber = '';
-        $secret = $this->getSecret();
-        $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
-        $sha1hash = sha1($tmp);
-        $tmp2 = "$sha1hash.$secret";
-        $sha1hash = sha1($tmp2);
+	/**
+	 * Get the XML registration string to be sent to the gateway
+	 *
+	 * @return string
+	 */
+	public function getData() {
+		$this->validate('transactionId');
 
-        $domTree = new \DOMDocument('1.0', 'UTF-8');
+		// Create the hash
+		$timestamp = strftime("%Y%m%d%H%M%S");
+		$merchantId = $this->getMerchantId();
+		$orderId = $this->getTransactionId();
+		// No amount, currency or card number for rebate requests but still needs to be in hash
+		$amount = '';
+		$currency = '';
+		$cardNumber = '';
+		$secret = $this->getSecret();
+		$tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
+		$sha1hash = sha1($tmp);
+		$tmp2 = "$sha1hash.$secret";
+		$sha1hash = sha1($tmp2);
 
-        // root element
-        $root = $domTree->createElement('request');
-        $root->setAttribute('type', 'void');
-        $root->setAttribute('timestamp', $timestamp);
-        $root = $domTree->appendChild($root);
+		$domTree = new \DOMDocument('1.0', 'UTF-8');
 
-        // merchant ID
-        $merchantEl = $domTree->createElement('merchantid');
-        $merchantEl->appendChild($domTree->createTextNode($merchantId));
-        $root->appendChild($merchantEl);
+		// root element
+		$root = $domTree->createElement('request');
+		$root->setAttribute('type', 'void');
+		$root->setAttribute('timestamp', $timestamp);
+		$root = $domTree->appendChild($root);
 
-        // account
-        $accountEl = $domTree->createElement('account');
-        $accountEl->appendChild($domTree->createTextNode($this->getAccount()));
-        $root->appendChild($accountEl);
+		// merchant ID
+		$merchantEl = $domTree->createElement('merchantid');
+		$merchantEl->appendChild($domTree->createTextNode($merchantId));
+		$root->appendChild($merchantEl);
 
-        // original order ID
-        $orderIdEl = $domTree->createElement('orderid');
-        $orderIdEl->appendChild($domTree->createTextNode($orderId));
-        $root->appendChild($orderIdEl);
+		// account
+		$accountEl = $domTree->createElement('account');
+		$accountEl->appendChild($domTree->createTextNode($this->getAccount()));
+		$root->appendChild($accountEl);
 
-        // pasref returned for original transaction
-        $pasRefEl = $domTree->createElement('pasref');
-        $pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
-        $root->appendChild($pasRefEl);
+		// original order ID
+		$orderIdEl = $domTree->createElement('orderid');
+		$orderIdEl->appendChild($domTree->createTextNode($orderId));
+		$root->appendChild($orderIdEl);
 
-        // authcode returned for original transaction
-        $authCodeEl = $domTree->createElement('authcode');
-        $authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
-        $root->appendChild($authCodeEl);
+		// pasref returned for original transaction
+		$pasRefEl = $domTree->createElement('pasref');
+		$pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
+		$root->appendChild($pasRefEl);
 
-        $sha1El = $domTree->createElement('sha1hash');
-        $sha1El->appendChild($domTree->createTextNode($sha1hash));
-        $root->appendChild($sha1El);
+		// authcode returned for original transaction
+		$authCodeEl = $domTree->createElement('authcode');
+		$authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
+		$root->appendChild($authCodeEl);
 
-        $xmlString = $domTree->saveXML($root);
+		$sha1El = $domTree->createElement('sha1hash');
+		$sha1El->appendChild($domTree->createTextNode($sha1hash));
+		$root->appendChild($sha1El);
 
-        return $xmlString;
-    }
+		$xmlString = $domTree->saveXML($root);
 
-    protected function createResponse($data)
-    {
-        return $this->response = new VoidResponse($this, $data);
-    }
+		return $xmlString;
+	}
 
-    public function getEndpoint()
-    {
-        return $this->getParameter('SecureDataVaultEndpoint');
-    }
-    public function setAuthEndpoint($value)
-    {
-        return $this->setParameter('SecureDataVaultEndpoint', $value);
-    }
+	protected function createResponse($data) {
+		return $this->response = new VoidResponse($this, $data);
+	}
+
+	public function getEndpoint() {
+		return $this->getParameter('SecureDataVaultEndpoint');
+	}
+
+	public function setAuthEndpoint($value) {
+		return $this->setParameter('SecureDataVaultEndpoint', $value);
+	}
+
 }

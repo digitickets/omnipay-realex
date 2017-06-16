@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Philip Wright- Christie <pwrightchristie.sfp@gmail.com>
  * Date: 04/08/15
@@ -6,136 +7,132 @@
 
 namespace Omnipay\Realex\Message;
 
-class UpdateCustomerRequest extends RemoteAbstractRequest
-{
-    public function getCustomerRef()
-    {
-        return $this->getParameter('customerRef');
-    }
+class UpdateCustomerRequest extends RemoteAbstractRequest {
 
-    public function setCustomerRef($customerRef)
-    {
-        $this->setParameter('customerRef', $customerRef);
-    }
+	public function getCustomerRef() {
+		return $this->getParameter('customerRef');
+	}
 
-    public function getData()
-    {
-        // Create the hash
-        $timestamp  = strftime("%Y%m%d%H%M%S");
-        $merchantId = $this->getMerchantId();
-        $orderId    = $this->getTransactionId();
-        $secret     = $this->getSecret();
-        $payerRef   = $this->getCustomerRef();
+	public function setCustomerRef($customerRef) {
+		$this->setParameter('customerRef', $customerRef);
+	}
 
-        //$tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$payerRef";
-        $tmp      = "$timestamp.$merchantId.$orderId...$payerRef";
-        $sha1hash = sha1($tmp);
-        $tmp2     = "$sha1hash.$secret";
-        $sha1hash = sha1($tmp2);
+	public function getData() {
+		// Create the hash
+		$timestamp = strftime("%Y%m%d%H%M%S");
+		$merchantId = $this->getMerchantId();
+		$orderId = $this->getTransactionId();
+		$secret = $this->getSecret();
+		$payerRef = $this->getCustomerRef();
 
-        $domTree = new \DOMDocument('1.0', 'UTF-8');
+		//$tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$payerRef";
+		$tmp = "$timestamp.$merchantId.$orderId...$payerRef";
+		$sha1hash = sha1($tmp);
+		$tmp2 = "$sha1hash.$secret";
+		$sha1hash = sha1($tmp2);
 
-        // root element
-        $root = $domTree->createElement('request');
-        $root->setAttribute('type', 'payer-edit');
-        $root->setAttribute('timestamp', $timestamp);
-        $root = $domTree->appendChild($root);
+		$domTree = new \DOMDocument('1.0', 'UTF-8');
 
-        // merchant ID
-        $merchantEl = $domTree->createElement('merchantid');
-        $merchantEl->appendChild($domTree->createTextNode($merchantId));
-        $root->appendChild($merchantEl);
+		// root element
+		$root = $domTree->createElement('request');
+		$root->setAttribute('type', 'payer-edit');
+		$root->setAttribute('timestamp', $timestamp);
+		$root = $domTree->appendChild($root);
 
-        // order ID
-        $merchantEl = $domTree->createElement('orderid');
-        $merchantEl->appendChild($domTree->createTextNode($orderId));
-        $root->appendChild($merchantEl);
+		// merchant ID
+		$merchantEl = $domTree->createElement('merchantid');
+		$merchantEl->appendChild($domTree->createTextNode($merchantId));
+		$root->appendChild($merchantEl);
 
-        $payerEl = $domTree->createElement('payer');
-        $payerEl->setAttribute('type', 'Business');
-        $payerEl->setAttribute('ref', $payerRef);
+		// order ID
+		$merchantEl = $domTree->createElement('orderid');
+		$merchantEl->appendChild($domTree->createTextNode($orderId));
+		$root->appendChild($merchantEl);
 
-        /**
-         * @var \Omnipay\Common\CreditCard $card
-         */
-        $card = $this->getCard();
+		$payerEl = $domTree->createElement('payer');
+		$payerEl->setAttribute('type', 'Business');
+		$payerEl->setAttribute('ref', $payerRef);
 
-        $titleEl = $domTree->createElement('title');
-        $titleEl->appendChild($domTree->createTextNode($card->getBillingTitle()));
-        $payerEl->appendChild($titleEl);
+		/**
+		 * @var \Omnipay\Common\CreditCard $card
+		 */
+		$card = $this->getCard();
 
-        $firstnameEl = $domTree->createElement('firstname');
-        $firstnameEl->appendChild($domTree->createTextNode($card->getBillingFirstName()));
-        $payerEl->appendChild($firstnameEl);
+		$titleEl = $domTree->createElement('title');
+		$titleEl->appendChild($domTree->createTextNode($card->getBillingTitle()));
+		$payerEl->appendChild($titleEl);
 
-        $lastnameEl = $domTree->createElement('surname');
-        $lastnameEl->appendChild($domTree->createTextNode($card->getBillingLastName()));
-        $payerEl->appendChild($lastnameEl);
+		$firstnameEl = $domTree->createElement('firstname');
+		$firstnameEl->appendChild($domTree->createTextNode($card->getBillingFirstName()));
+		$payerEl->appendChild($firstnameEl);
 
-        $companyEl = $domTree->createElement('company');
-        $companyEl->appendChild($domTree->createTextNode($card->getBillingCompany()));
-        $payerEl->appendChild($companyEl);
+		$lastnameEl = $domTree->createElement('surname');
+		$lastnameEl->appendChild($domTree->createTextNode($card->getBillingLastName()));
+		$payerEl->appendChild($lastnameEl);
 
-        $addressEl = $domTree->createElement('address');
+		$companyEl = $domTree->createElement('company');
+		$companyEl->appendChild($domTree->createTextNode($card->getBillingCompany()));
+		$payerEl->appendChild($companyEl);
 
-        $line1El = $domTree->createElement('line1');
-        $line1El->appendChild($domTree->createTextNode($card->getBillingAddress1()));
-        $addressEl->appendChild($line1El);
+		$addressEl = $domTree->createElement('address');
 
-        $line2El = $domTree->createElement('line2');
-        $line2El->appendChild($domTree->createTextNode($card->getBillingAddress2()));
-        $addressEl->appendChild($line2El);
+		$line1El = $domTree->createElement('line1');
+		$line1El->appendChild($domTree->createTextNode($card->getBillingAddress1()));
+		$addressEl->appendChild($line1El);
 
-        $cityEl = $domTree->createElement('city');
-        $cityEl->appendChild($domTree->createTextNode($card->getBillingCity()));
-        $addressEl->appendChild($cityEl);
+		$line2El = $domTree->createElement('line2');
+		$line2El->appendChild($domTree->createTextNode($card->getBillingAddress2()));
+		$addressEl->appendChild($line2El);
 
-        $countyEl = $domTree->createElement('county');
-        $countyEl->appendChild($domTree->createTextNode($card->getBillingState()));
-        $addressEl->appendChild($countyEl);
+		$cityEl = $domTree->createElement('city');
+		$cityEl->appendChild($domTree->createTextNode($card->getBillingCity()));
+		$addressEl->appendChild($cityEl);
 
-        $postcodeEl = $domTree->createElement('postcode');
-        $postcodeEl->appendChild($domTree->createTextNode($card->getBillingPostcode()));
-        $addressEl->appendChild($postcodeEl);
+		$countyEl = $domTree->createElement('county');
+		$countyEl->appendChild($domTree->createTextNode($card->getBillingState()));
+		$addressEl->appendChild($countyEl);
 
-        $countryEl = $domTree->createElement('country');
-        $countryEl->appendChild($domTree->createTextNode($card->getBillingCountry()));
-        $addressEl->appendChild($countryEl);
+		$postcodeEl = $domTree->createElement('postcode');
+		$postcodeEl->appendChild($domTree->createTextNode($card->getBillingPostcode()));
+		$addressEl->appendChild($postcodeEl);
 
-        $payerEl->appendChild($addressEl);
+		$countryEl = $domTree->createElement('country');
+		$countryEl->appendChild($domTree->createTextNode($card->getBillingCountry()));
+		$addressEl->appendChild($countryEl);
 
-        $phonenumbersEl = $domTree->createElement('phonenumbers');
-        $homeEl         = $domTree->createElement('home');
-        $homeEl->appendChild($domTree->createTextNode($card->getBillingPhone()));
-        $phonenumbersEl->appendChild($homeEl);
-        $payerEl->appendChild($phonenumbersEl);
+		$payerEl->appendChild($addressEl);
 
-        $emailEl = $domTree->createElement('email');
-        $emailEl->appendChild($domTree->createTextNode($card->getEmail()));
-        $payerEl->appendChild($emailEl);
+		$phonenumbersEl = $domTree->createElement('phonenumbers');
+		$homeEl = $domTree->createElement('home');
+		$homeEl->appendChild($domTree->createTextNode($card->getBillingPhone()));
+		$phonenumbersEl->appendChild($homeEl);
+		$payerEl->appendChild($phonenumbersEl);
 
-        $root->appendChild($payerEl);
+		$emailEl = $domTree->createElement('email');
+		$emailEl->appendChild($domTree->createTextNode($card->getEmail()));
+		$payerEl->appendChild($emailEl);
 
-        $sha1El = $domTree->createElement('sha1hash');
-        $sha1El->appendChild($domTree->createTextNode($sha1hash));
-        $root->appendChild($sha1El);
+		$root->appendChild($payerEl);
 
-        $xmlString = $domTree->saveXML($root);
+		$sha1El = $domTree->createElement('sha1hash');
+		$sha1El->appendChild($domTree->createTextNode($sha1hash));
+		$root->appendChild($sha1El);
 
-        return $xmlString;
-    }
+		$xmlString = $domTree->saveXML($root);
 
-    protected function createResponse($data)
-    {
-        return $this->response = new UpdateCustomerResponse($this, $data);
-    }
+		return $xmlString;
+	}
 
-    public function getEndpoint()
-    {
-        return $this->getParameter('SecureDataVaultEndpoint');
-    }
-    public function setAuthEndpoint($value)
-    {
-        return $this->setParameter('SecureDataVaultEndpoint', $value);
-    }
+	protected function createResponse($data) {
+		return $this->response = new UpdateCustomerResponse($this, $data);
+	}
+
+	public function getEndpoint() {
+		return $this->getParameter('SecureDataVaultEndpoint');
+	}
+
+	public function setAuthEndpoint($value) {
+		return $this->setParameter('SecureDataVaultEndpoint', $value);
+	}
+
 }

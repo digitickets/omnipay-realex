@@ -9,169 +9,164 @@ use Omnipay\Common\Message\AbstractRequest;
 /**
  * Realex Complete Auth Request
  */
-class VerifySigRequest extends RemoteAbstractRequest
-{
-    /**
-     * Decode our previously-encoded Merchant Data
-     *
-     * @param string $data
-     * @return array
-     */
-    protected function decodeMerchantData($data)
-    {
-        $json = base64_decode($data);
-        $cardData = (array)json_decode($json);
+class VerifySigRequest extends RemoteAbstractRequest {
 
-        return $cardData;
-    }
+	/**
+	 * Decode our previously-encoded Merchant Data
+	 *
+	 * @param string $data
+	 * @return array
+	 */
+	protected function decodeMerchantData($data) {
+		$json = base64_decode($data);
+		$cardData = (array) json_decode($json);
 
-    /**
-     * Get the XML registration string to be sent to the gateway
-     *
-     * @return string
-     */
-    public function getData()
-    {
-        /**
-         * Data will be sent from the 3D Secure provider in two fields: MD and ParRes.
-         * MD contains our original data (encoded by us) and PaRes will be sent to the gateway.
-         */
-        $returnedData = $this->decodeMerchantData($this->httpRequest->request->get('MD', ''));
+		return $cardData;
+	}
 
-        $this->setTransactionId($returnedData['transactionId']);
-        $this->setAmount($returnedData['amount']);
-        $this->setCurrency($returnedData['currency']);
-        $this->setCard(new CreditCard($returnedData));
+	/**
+	 * Get the XML registration string to be sent to the gateway
+	 *
+	 * @return string
+	 */
+	public function getData() {
+		/**
+		 * Data will be sent from the 3D Secure provider in two fields: MD and ParRes.
+		 * MD contains our original data (encoded by us) and PaRes will be sent to the gateway.
+		 */
+		$returnedData = $this->decodeMerchantData($this->httpRequest->request->get('MD', ''));
 
-        $paRes = $this->httpRequest->request->get('PaRes', '');
+		$this->setTransactionId($returnedData['transactionId']);
+		$this->setAmount($returnedData['amount']);
+		$this->setCurrency($returnedData['currency']);
+		$this->setCard(new CreditCard($returnedData));
 
-        // Create the hash
-        $timestamp = strftime("%Y%m%d%H%M%S");
-        $merchantId = $this->getMerchantId();
-        $orderId = $this->getTransactionId();
-        $amount = $this->getAmountInteger();
-        $currency = $this->getCurrency();
-        $cardNumber = $this->getCard()->getNumber();
-        $secret = $this->getSecret();
-        $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
-        $sha1hash = sha1($tmp);
-        $tmp2 = "$sha1hash.$secret";
-        $sha1hash = sha1($tmp2);
+		$paRes = $this->httpRequest->request->get('PaRes', '');
 
-        $domTree = new \DOMDocument('1.0', 'UTF-8');
+		// Create the hash
+		$timestamp = strftime("%Y%m%d%H%M%S");
+		$merchantId = $this->getMerchantId();
+		$orderId = $this->getTransactionId();
+		$amount = $this->getAmountInteger();
+		$currency = $this->getCurrency();
+		$cardNumber = $this->getCard()->getNumber();
+		$secret = $this->getSecret();
+		$tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
+		$sha1hash = sha1($tmp);
+		$tmp2 = "$sha1hash.$secret";
+		$sha1hash = sha1($tmp2);
 
-        // root element
-        $root = $domTree->createElement('request');
-        $root->setAttribute('type', '3ds-verifysig');
-        $root->setAttribute('timestamp', $timestamp);
-        $root = $domTree->appendChild($root);
+		$domTree = new \DOMDocument('1.0', 'UTF-8');
 
-        // merchant ID
-        $merchantEl = $domTree->createElement('merchantid');
-        $merchantEl->appendChild($domTree->createTextNode($merchantId));
-        $root->appendChild($merchantEl);
+		// root element
+		$root = $domTree->createElement('request');
+		$root->setAttribute('type', '3ds-verifysig');
+		$root->setAttribute('timestamp', $timestamp);
+		$root = $domTree->appendChild($root);
 
-        // account
-        $merchantEl = $domTree->createElement('account');
-        $merchantEl->appendChild($domTree->createTextNode($this->getAccount()));
-        $root->appendChild($merchantEl);
+		// merchant ID
+		$merchantEl = $domTree->createElement('merchantid');
+		$merchantEl->appendChild($domTree->createTextNode($merchantId));
+		$root->appendChild($merchantEl);
 
-        // order ID
-        $merchantEl = $domTree->createElement('orderid');
-        $merchantEl->appendChild($domTree->createTextNode($orderId));
-        $root->appendChild($merchantEl);
+		// account
+		$merchantEl = $domTree->createElement('account');
+		$merchantEl->appendChild($domTree->createTextNode($this->getAccount()));
+		$root->appendChild($merchantEl);
 
-        // amount
-        $amountEl = $domTree->createElement('amount');
-        $amountEl->appendChild($domTree->createTextNode($amount));
-        $amountEl->setAttribute('currency', $this->getCurrency());
-        $root->appendChild($amountEl);
+		// order ID
+		$merchantEl = $domTree->createElement('orderid');
+		$merchantEl->appendChild($domTree->createTextNode($orderId));
+		$root->appendChild($merchantEl);
 
-        /**
-         * @var \Omnipay\Common\CreditCard $card
-         */
-        $card = $this->getCard();
+		// amount
+		$amountEl = $domTree->createElement('amount');
+		$amountEl->appendChild($domTree->createTextNode($amount));
+		$amountEl->setAttribute('currency', $this->getCurrency());
+		$root->appendChild($amountEl);
 
-        // Card details
-        $cardEl = $domTree->createElement('card');
+		/**
+		 * @var \Omnipay\Common\CreditCard $card
+		 */
+		$card = $this->getCard();
 
-        $cardNumberEl = $domTree->createElement('number');
-        $cardNumberEl->appendChild($domTree->createTextNode($card->getNumber()));
-        $cardEl->appendChild($cardNumberEl);
+		// Card details
+		$cardEl = $domTree->createElement('card');
 
-        $expiryEl = $domTree->createElement('expdate'); // mmyy
-        $expiryEl->appendChild($domTree->createTextNode($card->getExpiryDate("my")));
-        $cardEl->appendChild($expiryEl);
+		$cardNumberEl = $domTree->createElement('number');
+		$cardNumberEl->appendChild($domTree->createTextNode($card->getNumber()));
+		$cardEl->appendChild($cardNumberEl);
 
-        $cardTypeEl = $domTree->createElement('type');
-        $cardTypeEl->appendChild($domTree->createTextNode($this->getCardBrand()));
-        $cardEl->appendChild($cardTypeEl);
+		$expiryEl = $domTree->createElement('expdate'); // mmyy
+		$expiryEl->appendChild($domTree->createTextNode($card->getExpiryDate("my")));
+		$cardEl->appendChild($expiryEl);
 
-        $cardNameEl = $domTree->createElement('chname');
-        $cardNameEl->appendChild($domTree->createTextNode($card->getBillingName()));
-        $cardEl->appendChild($cardNameEl);
+		$cardTypeEl = $domTree->createElement('type');
+		$cardTypeEl->appendChild($domTree->createTextNode($this->getCardBrand()));
+		$cardEl->appendChild($cardTypeEl);
 
-        $root->appendChild($cardEl);
+		$cardNameEl = $domTree->createElement('chname');
+		$cardNameEl->appendChild($domTree->createTextNode($card->getBillingName()));
+		$cardEl->appendChild($cardNameEl);
 
-        $paResEl = $domTree->createElement('pares');
-        $paResEl->appendChild($domTree->createTextNode($paRes));
-        $root->appendChild($paResEl);
+		$root->appendChild($cardEl);
 
-        $sha1El = $domTree->createElement('sha1hash');
-        $sha1El->appendChild($domTree->createTextNode($sha1hash));
-        $root->appendChild($sha1El);
-		
-        $xmlString = $domTree->saveXML($root);
-	
-        return $xmlString;
-    }
+		$paResEl = $domTree->createElement('pares');
+		$paResEl->appendChild($domTree->createTextNode($paRes));
+		$root->appendChild($paResEl);
 
-    protected function createResponse($data)
-    {
-        return $this->response = new VerifySigResponse($this, $data);
-    }
+		$sha1El = $domTree->createElement('sha1hash');
+		$sha1El->appendChild($domTree->createTextNode($sha1hash));
+		$root->appendChild($sha1El);
 
-    public function getEndpoint()
-    {
-        return $this->getParameter('authEndpoint');
-    }
-    public function setAuthEndpoint($value)
-    {
-        return $this->setParameter('authEndpoint', $value);
-    }
+		$xmlString = $domTree->saveXML($root);
 
-    /**
-     * @param mixed $parameters
-     *
-     * @return AuthResponse|VerifySigResponse
-     */
-    public function sendData($parameters)
-    {
-        /**
-         * @var VerifySigResponse $response
-         */
-        $response = parent::sendData($parameters);
-	
-        if ($response->isSuccessful()) {
-            // a few additional parameters that need to be passed for 3D-Secure transactions
-            $parameters = $this->getParameters();
-            $parameters['cavv'] = $response->getParam('cavv');
-            $parameters['eci'] = $response->getParam('eci');
-            $parameters['xid'] = $response->getParam('xid');
-			
-            /**
-             * Now finally, do our authorisation
-             *
-             * @var AuthRequest $request
-             * @var AuthResponse $response
-             */
-            $request = new AuthRequest($this->httpClient, $this->httpRequest);
-            $request->initialize($parameters);
-	
-            $response = $request->send();
-			
-        }
-		
-        return $response;
-    }
+		return $xmlString;
+	}
+
+	protected function createResponse($data) {
+		return $this->response = new VerifySigResponse($this, $data);
+	}
+
+	public function getEndpoint() {
+		return $this->getParameter('authEndpoint');
+	}
+
+	public function setAuthEndpoint($value) {
+		return $this->setParameter('authEndpoint', $value);
+	}
+
+	/**
+	 * @param mixed $parameters
+	 *
+	 * @return AuthResponse|VerifySigResponse
+	 */
+	public function sendData($parameters) {
+		/**
+		 * @var VerifySigResponse $response
+		 */
+		$response = parent::sendData($parameters);
+
+		if ($response->isSuccessful()) {
+			// a few additional parameters that need to be passed for 3D-Secure transactions
+			$parameters = $this->getParameters();
+			$parameters['cavv'] = $response->getParam('cavv');
+			$parameters['eci'] = $response->getParam('eci');
+			$parameters['xid'] = $response->getParam('xid');
+
+			/**
+			 * Now finally, do our authorisation
+			 *
+			 * @var AuthRequest $request
+			 * @var AuthResponse $response
+			 */
+			$request = new AuthRequest($this->httpClient, $this->httpRequest);
+			$request->initialize($parameters);
+
+			$response = $request->send();
+		}
+
+		return $response;
+	}
+
 }
