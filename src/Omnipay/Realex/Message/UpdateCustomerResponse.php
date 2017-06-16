@@ -7,33 +7,38 @@
 
 namespace Omnipay\Realex\Message;
 
-class UpdateCustomerResponse extends RemoteAbstractResponse {
+class UpdateCustomerResponse extends RemoteAbstractResponse
+{
+    public function isSuccessful()
+    {
+        return ($this->xml->result == '00');
+    }
 
-	public function isSuccessful() {
-		return ($this->xml->result == '00');
-	}
+    public function getMessage()
+    {
+        return (string) $this->xml->message;
+    }
 
-	public function getMessage() {
-		return (string) $this->xml->message;
-	}
+    public function isRedirect()
+    {
+        return false;
+    }
 
-	public function isRedirect() {
-		return false;
-	}
+    public function getRedirectMethod()
+    {
+        return 'GET';
+    }
 
-	public function getRedirectMethod() {
-		return 'GET';
-	}
+    public function getRedirectData()
+    {
+        return null;
+    }
 
-	public function getRedirectData() {
-		return null;
-	}
-
-	/**
-	 * Gets the redirect target url.
-	 */
-	public function getRedirectUrl() {
-		return '';
-	}
-
+    /**
+     * Gets the redirect target url.
+     */
+    public function getRedirectUrl()
+    {
+        return '';
+    }
 }

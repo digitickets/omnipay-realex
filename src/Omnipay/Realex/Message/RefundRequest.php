@@ -7,128 +7,139 @@ use Omnipay\Common\Message\AbstractRequest;
 /**
  * Realex Refund Request
  */
-class RefundRequest extends RemoteAbstractRequest {
+class RefundRequest extends RemoteAbstractRequest
+{
+    public function getTransactionReference()
+    {
+        return $this->getParameter('transactionReference');
+    }
 
-	public function getTransactionReference() {
-		return $this->getParameter('transactionReference');
-	}
+    public function setTransactionReference($value)
+    {
+        return $this->setParameter('transactionReference', $value);
+    }
 
-	public function setTransactionReference($value) {
-		return $this->setParameter('transactionReference', $value);
-	}
+    public function getAuthCode()
+    {
+        return $this->getParameter('authCode');
+    }
 
-	public function getAuthCode() {
-		return $this->getParameter('authCode');
-	}
+    public function setAuthCode($value)
+    {
+        return $this->setParameter('authCode', $value);
+    }
 
-	public function setAuthCode($value) {
-		return $this->setParameter('authCode', $value);
-	}
+    public function getOriginalTransactionId()
+    {
+        return $this->getParameter('originalTransactionId');
+    }
 
-	public function getOriginalTransactionId() {
-		return $this->getParameter('originalTransactionId');
-	}
+    public function setOriginalTransactionId($value)
+    {
+        return $this->setParameter('originalTransactionId', $value);
+    }
 
-	public function setOriginalTransactionId($value) {
-		return $this->setParameter('originalTransactionId', $value);
-	}
+    public function getRefundPassword()
+    {
+        return $this->getParameter('refundPassword');
+    }
 
-	public function getRefundPassword() {
-		return $this->getParameter('refundPassword');
-	}
+    public function setRefundPassword($value)
+    {
+        return $this->setParameter('refundPassword', $value);
+    }
 
-	public function setRefundPassword($value) {
-		return $this->setParameter('refundPassword', $value);
-	}
+    /**
+     * Get the XML registration string to be sent to the gateway
+     *
+     * @return string
+     */
+    public function getData()
+    {
+        $this->validate(
+            'amount', 'currency', 'originalTransactionId', 'transactionReference', 'authCode', 'refundPassword'
+        );
 
-	/**
-	 * Get the XML registration string to be sent to the gateway
-	 *
-	 * @return string
-	 */
-	public function getData() {
-		$this->validate(
-			'amount', 'currency', 'originalTransactionId', 'transactionReference', 'authCode', 'refundPassword'
-		);
+        // Create the hash
+        $timestamp = strftime("%Y%m%d%H%M%S");
+        $merchantId = $this->getMerchantId();
+        $originalTransactionId = $this->getOriginalTransactionId();
+        $amount = $this->getAmountInteger();
+        $currency = $this->getCurrency();
+        // No card number for rebate requests but still needs to be in hash
+        $cardNumber = '';
+        $secret = $this->getSecret();
+        $tmp = "$timestamp.$merchantId.$originalTransactionId.$amount.$currency.$cardNumber";
+        $sha1hash = sha1($tmp);
+        $tmp2 = "$sha1hash.$secret";
+        $sha1hash = sha1($tmp2);
 
-		// Create the hash
-		$timestamp = strftime("%Y%m%d%H%M%S");
-		$merchantId = $this->getMerchantId();
-		$originalTransactionId = $this->getOriginalTransactionId();
-		$amount = $this->getAmountInteger();
-		$currency = $this->getCurrency();
-		// No card number for rebate requests but still needs to be in hash
-		$cardNumber = '';
-		$secret = $this->getSecret();
-		$tmp = "$timestamp.$merchantId.$originalTransactionId.$amount.$currency.$cardNumber";
-		$sha1hash = sha1($tmp);
-		$tmp2 = "$sha1hash.$secret";
-		$sha1hash = sha1($tmp2);
+        $domTree = new \DOMDocument('1.0', 'UTF-8');
 
-		$domTree = new \DOMDocument('1.0', 'UTF-8');
+        // root element
+        $root = $domTree->createElement('request');
+        $root->setAttribute('type', 'rebate');
+        $root->setAttribute('timestamp', $timestamp);
+        $root = $domTree->appendChild($root);
 
-		// root element
-		$root = $domTree->createElement('request');
-		$root->setAttribute('type', 'rebate');
-		$root->setAttribute('timestamp', $timestamp);
-		$root = $domTree->appendChild($root);
+        // merchant ID
+        $merchantEl = $domTree->createElement('merchantid');
+        $merchantEl->appendChild($domTree->createTextNode($merchantId));
+        $root->appendChild($merchantEl);
 
-		// merchant ID
-		$merchantEl = $domTree->createElement('merchantid');
-		$merchantEl->appendChild($domTree->createTextNode($merchantId));
-		$root->appendChild($merchantEl);
+        // account
+        $accountEl = $domTree->createElement('account');
+        $accountEl->appendChild($domTree->createTextNode($this->getAccount()));
+        $root->appendChild($accountEl);
 
-		// account
-		$accountEl = $domTree->createElement('account');
-		$accountEl->appendChild($domTree->createTextNode($this->getAccount()));
-		$root->appendChild($accountEl);
+        // the ID of the original transaction (confusingly in a tag called 'orderid')
+        $orderIdEl = $domTree->createElement('orderid');
+        $orderIdEl->appendChild($domTree->createTextNode($originalTransactionId));
+        $root->appendChild($orderIdEl);
 
-		// the ID of the original transaction (confusingly in a tag called 'orderid')
-		$orderIdEl = $domTree->createElement('orderid');
-		$orderIdEl->appendChild($domTree->createTextNode($originalTransactionId));
-		$root->appendChild($orderIdEl);
+        // pasref for the original transaction
+        $pasRefEl = $domTree->createElement('pasref');
+        $pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
+        $root->appendChild($pasRefEl);
 
-		// pasref for the original transaction
-		$pasRefEl = $domTree->createElement('pasref');
-		$pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
-		$root->appendChild($pasRefEl);
+        // authcode returned for original transaction
+        $authCodeEl = $domTree->createElement('authcode');
+        $authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
+        $root->appendChild($authCodeEl);
 
-		// authcode returned for original transaction
-		$authCodeEl = $domTree->createElement('authcode');
-		$authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
-		$root->appendChild($authCodeEl);
+        // amount
+        $amountEl = $domTree->createElement('amount');
+        $amountEl->appendChild($domTree->createTextNode($amount));
+        $amountEl->setAttribute('currency', $this->getCurrency());
+        $root->appendChild($amountEl);
 
-		// amount
-		$amountEl = $domTree->createElement('amount');
-		$amountEl->appendChild($domTree->createTextNode($amount));
-		$amountEl->setAttribute('currency', $this->getCurrency());
-		$root->appendChild($amountEl);
+        // refund hash
+        $refundHash = sha1($this->getRefundPassword());
+        $refundHashEl = $domTree->createElement('refundhash');
+        $refundHashEl->appendChild($domTree->createTextNode($refundHash));
+        $root->appendChild($refundHashEl);
 
-		// refund hash
-		$refundHash = sha1($this->getRefundPassword());
-		$refundHashEl = $domTree->createElement('refundhash');
-		$refundHashEl->appendChild($domTree->createTextNode($refundHash));
-		$root->appendChild($refundHashEl);
+        $sha1El = $domTree->createElement('sha1hash');
+        $sha1El->appendChild($domTree->createTextNode($sha1hash));
+        $root->appendChild($sha1El);
 
-		$sha1El = $domTree->createElement('sha1hash');
-		$sha1El->appendChild($domTree->createTextNode($sha1hash));
-		$root->appendChild($sha1El);
+        $xmlString = $domTree->saveXML($root);
 
-		$xmlString = $domTree->saveXML($root);
+        return $xmlString;
+    }
 
-		return $xmlString;
-	}
+    protected function createResponse($data)
+    {
+        return $this->response = new RefundResponse($this, $data);
+    }
 
-	protected function createResponse($data) {
-		return $this->response = new RefundResponse($this, $data);
-	}
+    public function getEndpoint()
+    {
+        return $this->getParameter('AuthEndpoint');
+    }
 
-	public function getEndpoint() {
-		return $this->getParameter('AuthEndpoint');
-	}
-
-	public function setAuthEndpoint($value) {
-		return $this->setParameter('AuthEndpoint', $value);
-	}
-
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('AuthEndpoint', $value);
+    }
 }
