@@ -137,7 +137,12 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $method($hash . '.' . $this->getSecret());
     }
 
-    public function getRequestXML($card, $autoSettle = true, $extraData = array(), $addressData = true, $cardData = true)
+    public function getRequestXML(
+        $card,
+        $autoSettle = true,
+        $extraData = array(),
+        $addressData = true,
+        $cardData = true)
     {
         $data = $this->getBaseData($autoSettle, $card);
         $brand = (strcasecmp($card->getBrand(), "mastercard") == 0) ? "mc" : $card->getBrand();

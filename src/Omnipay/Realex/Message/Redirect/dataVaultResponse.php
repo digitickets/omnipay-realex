@@ -8,7 +8,7 @@ use Omnipay\Common\Message\RequestInterface;
 /**
  * Realex Response
  */
-class dataVaultResponse extends AbstractResponse
+class DataVaultResponse extends AbstractResponse
 {
     public function __construct(RequestInterface $request, $data = array())
     {
@@ -50,12 +50,14 @@ class dataVaultResponse extends AbstractResponse
 
     public function isPayerSetupSuccessful()
     {
-        return !isset($this->data['PAYER_SETUP']) || (isset($this->data['PAYER_SETUP']) && '00' === $this->data['PAYER_SETUP']);
+        return !isset($this->data['PAYER_SETUP']) ||
+            (isset($this->data['PAYER_SETUP']) && '00' === $this->data['PAYER_SETUP']);
     }
 
     public function isPayerCardAddSuccessful()
     {
-        return !isset($this->data['PMT_SETUP']) || (isset($this->data['PMT_SETUP']) && '00' === $this->data['PMT_SETUP']);
+        return !isset($this->data['PMT_SETUP']) ||
+            (isset($this->data['PMT_SETUP']) && '00' === $this->data['PMT_SETUP']);
     }
 
     public function getCardToken()
