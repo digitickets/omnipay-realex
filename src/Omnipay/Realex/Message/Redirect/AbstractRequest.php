@@ -142,7 +142,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         $autoSettle = true,
         $extraData = array(),
         $addressData = true,
-        $cardData = true)
+        $cardData = true
+		)
     {
         $data = $this->getBaseData($autoSettle, $card);
         $brand = (strcasecmp($card->getBrand(), "mastercard") == 0) ? "mc" : $card->getBrand();
