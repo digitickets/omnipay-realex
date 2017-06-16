@@ -57,7 +57,12 @@ class RefundRequest extends RemoteAbstractRequest
     public function getData()
     {
         $this->validate(
-            'amount', 'currency', 'originalTransactionId', 'transactionReference', 'authCode', 'refundPassword'
+            'amount',
+            'currency',
+            'originalTransactionId',
+            'transactionReference',
+            'authCode',
+            'refundPassword'
         );
 
         // Create the hash
