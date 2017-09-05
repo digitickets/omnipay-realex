@@ -145,7 +145,9 @@ class AuthRequest extends RemoteAbstractRequest
         $addressEl = $domTree->createElement('address');
         $addressEl->setAttribute('type', 'billing');
         $countryEl = $domTree->createElement('country', $card->getBillingCountry());
+        $postcodeEl = $domTree->createElement('code', $card->getBillingPostcode());
         $addressEl->appendChild($countryEl);
+        $addressEl->appendChild($postcodeEl);
         $tssEl->appendChild($addressEl);
         $root->appendChild($tssEl);
 
