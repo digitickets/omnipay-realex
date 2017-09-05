@@ -8,159 +8,153 @@ use Omnipay\Common\Message\AbstractRequest;
 /**
  * Realex Auth Request
  */
-class AuthRequest extends RemoteAbstractRequest
-{
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
+class AuthRequest extends RemoteAbstractRequest {
+	protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
-    public function getCavv()
-    {
-        return $this->getParameter('cavv');
-    }
+	public function setCavv( $value ) {
+		return $this->setParameter( 'cavv', $value );
+	}
 
-    public function setCavv($value)
-    {
-        return $this->setParameter('cavv', $value);
-    }
+	public function setEci( $value ) {
+		return $this->setParameter( 'eci', $value );
+	}
 
-    public function getEci()
-    {
-        return $this->getParameter('eci');
-    }
+	public function setXid( $value ) {
+		return $this->setParameter( 'xid', $value );
+	}
 
-    public function setEci($value)
-    {
-        return $this->setParameter('eci', $value);
-    }
+	/**
+	 * Get the XML registration string to be sent to the gateway
+	 *
+	 * @return string
+	 */
+	public function getData() {
+		$this->validate( 'amount', 'currency', 'transactionId' );
 
-    public function getXid()
-    {
-        return $this->getParameter('xid');
-    }
+		// Create the hash
+		$timestamp  = strftime( "%Y%m%d%H%M%S" );
+		$merchantId = $this->getMerchantId();
+		$orderId    = $this->getTransactionId();
+		$amount     = $this->getAmountInteger();
+		$currency   = $this->getCurrency();
+		$cardNumber = $this->getCard()->getNumber();
+		$secret     = $this->getSecret();
+		$tmp        = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
+		$sha1hash   = sha1( $tmp );
+		$tmp2       = "$sha1hash.$secret";
+		$sha1hash   = sha1( $tmp2 );
 
-    public function setXid($value)
-    {
-        return $this->setParameter('xid', $value);
-    }
 
-    /**
-     * Get the XML registration string to be sent to the gateway
-     *
-     * @return string
-     */
-    public function getData()
-    {
-        $this->validate('amount', 'currency', 'transactionId');
+		$domTree = new \DOMDocument( '1.0', 'UTF-8' );
 
-        // Create the hash
-        $timestamp = strftime("%Y%m%d%H%M%S");
-        $merchantId = $this->getMerchantId();
-        $orderId = $this->getTransactionId();
-        $amount = $this->getAmountInteger();
-        $currency = $this->getCurrency();
-        $cardNumber = $this->getCard()->getNumber();
-        $secret = $this->getSecret();
-        $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
-        $sha1hash = sha1($tmp);
-        $tmp2 = "$sha1hash.$secret";
-        $sha1hash = sha1($tmp2);
+		// root element
+		$root = $domTree->createElement( 'request' );
+		$root->setAttribute( 'type', 'auth' );
+		$root->setAttribute( 'timestamp', $timestamp );
+		$root = $domTree->appendChild( $root );
 
-        $domTree = new \DOMDocument('1.0', 'UTF-8');
+		// merchant ID
+		$merchantEl = $domTree->createElement( 'merchantid', $merchantId );
+		$root->appendChild( $merchantEl );
 
-        // root element
-        $root = $domTree->createElement('request');
-        $root->setAttribute('type', 'auth');
-        $root->setAttribute('timestamp', $timestamp);
-        $root = $domTree->appendChild($root);
+		// account
+		$merchantEl = $domTree->createElement( 'account', $this->getAccount() );
+		$root->appendChild( $merchantEl );
 
-        // merchant ID
-        $merchantEl = $domTree->createElement('merchantid', $merchantId);
-        $root->appendChild($merchantEl);
+		// order ID
+		$merchantEl = $domTree->createElement( 'orderid', $orderId );
+		$root->appendChild( $merchantEl );
 
-        // account
-        $merchantEl = $domTree->createElement('account', $this->getAccount());
-        $root->appendChild($merchantEl);
+		// amount
+		$amountEl = $domTree->createElement( 'amount', $amount );
+		$amountEl->setAttribute( 'currency', $this->getCurrency() );
+		$root->appendChild( $amountEl );
 
-        // order ID
-        $merchantEl = $domTree->createElement('orderid', $orderId);
-        $root->appendChild($merchantEl);
+		/**
+		 * @var \Omnipay\Common\CreditCard $card
+		 */
+		$card = $this->getCard();
+		$this->setCode( $card->getBillingPostcode(), $card->getBillingAddress1() );
 
-        // amount
-        $amountEl = $domTree->createElement('amount', $amount);
-        $amountEl->setAttribute('currency', $this->getCurrency());
-        $root->appendChild($amountEl);
+		// Card details
+		$cardEl = $domTree->createElement( 'card' );
 
-        /**
-         * @var \Omnipay\Common\CreditCard $card
-         */
-        $card = $this->getCard();
+		$cardNumberEl = $domTree->createElement( 'number', $card->getNumber() );
+		$cardEl->appendChild( $cardNumberEl );
 
-        // Card details
-        $cardEl = $domTree->createElement('card');
+		$expiryEl = $domTree->createElement( 'expdate', $card->getExpiryDate( "my" ) ); // mmyy
+		$cardEl->appendChild( $expiryEl );
 
-        $cardNumberEl = $domTree->createElement('number', $card->getNumber());
-        $cardEl->appendChild($cardNumberEl);
+		$cardTypeEl = $domTree->createElement( 'type', $this->getCardBrand() );
+		$cardEl->appendChild( $cardTypeEl );
 
-        $expiryEl = $domTree->createElement('expdate', $card->getExpiryDate("my")); // mmyy
-        $cardEl->appendChild($expiryEl);
+		$cardNameEl = $domTree->createElement( 'chname', $card->getBillingName() );
+		$cardEl->appendChild( $cardNameEl );
 
-        $cardTypeEl = $domTree->createElement('type', $this->getCardBrand());
-        $cardEl->appendChild($cardTypeEl);
+		$cvnEl = $domTree->createElement( 'cvn' );
 
-        $cardNameEl = $domTree->createElement('chname', $card->getBillingName());
-        $cardEl->appendChild($cardNameEl);
+		$cvnNumberEl = $domTree->createElement( 'number', $card->getCvv() );
+		$cvnEl->appendChild( $cvnNumberEl );
 
-        $cvnEl = $domTree->createElement('cvn');
+		$presIndEl = $domTree->createElement( 'presind', 1 );
+		$cvnEl->appendChild( $presIndEl );
 
-        $cvnNumberEl = $domTree->createElement('number', $card->getCvv());
-        $cvnEl->appendChild($cvnNumberEl);
+		$cardEl->appendChild( $cvnEl );
 
-        $presIndEl = $domTree->createElement('presind', 1);
-        $cvnEl->appendChild($presIndEl);
+		$issueEl = $domTree->createElement( 'issueno', $card->getIssueNumber() );
+		$cardEl->appendChild( $issueEl );
 
-        $cardEl->appendChild($cvnEl);
+		$root->appendChild( $cardEl );
 
-        $issueEl = $domTree->createElement('issueno', $card->getIssueNumber());
-        $cardEl->appendChild($issueEl);
+		$settleEl = $domTree->createElement( 'autosettle' );
+		$settleEl->setAttribute( 'flag', 1 );
+		$root->appendChild( $settleEl );
 
-        $root->appendChild($cardEl);
+		// 3D Secure section
+		$mpiEl  = $domTree->createElement( 'mpi' );
+		$cavvEl = $domTree->createElement( 'cavv', $this->getCavv() );
+		$xidEl  = $domTree->createElement( 'xid', $this->getXid() );
+		$eciEl  = $domTree->createElement( 'eci', $this->getEci() );
+		$mpiEl->appendChild( $cavvEl );
+		$mpiEl->appendChild( $xidEl );
+		$mpiEl->appendChild( $eciEl );
+		$root->appendChild( $mpiEl );
 
-        $settleEl = $domTree->createElement('autosettle');
-        $settleEl->setAttribute('flag', 1);
-        $root->appendChild($settleEl);
+		$sha1El = $domTree->createElement( 'sha1hash', $sha1hash );
+		$root->appendChild( $sha1El );
 
-        // 3D Secure section
-        $mpiEl = $domTree->createElement('mpi');
-        $cavvEl = $domTree->createElement('cavv', $this->getCavv());
-        $xidEl = $domTree->createElement('xid', $this->getXid());
-        $eciEl = $domTree->createElement('eci', $this->getEci());
-        $mpiEl->appendChild($cavvEl);
-        $mpiEl->appendChild($xidEl);
-        $mpiEl->appendChild($eciEl);
-        $root->appendChild($mpiEl);
+		$tssEl     = $domTree->createElement( 'tssinfo' );
+		$addressEl = $domTree->createElement( 'address' );
+		$addressEl->setAttribute( 'type', 'billing' );
+		$countryEl  = $domTree->createElement( 'country', $card->getBillingCountry() );
+		$postcodeEl = $domTree->createElement( 'code', $this->getCode() );
+		$addressEl->appendChild( $countryEl );
+		$addressEl->appendChild( $postcodeEl );
+		$tssEl->appendChild( $addressEl );
+		$root->appendChild( $tssEl );
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
-        $root->appendChild($sha1El);
+		$xmlString = $domTree->saveXML( $root );
 
-        $tssEl = $domTree->createElement('tssinfo');
-        $addressEl = $domTree->createElement('address');
-        $addressEl->setAttribute('type', 'billing');
-        $countryEl = $domTree->createElement('country', $card->getBillingCountry());
-        $addressEl->appendChild($countryEl);
-        $tssEl->appendChild($addressEl);
-        $root->appendChild($tssEl);
+		return $xmlString;
+	}
 
-        $xmlString = $domTree->saveXML($root);
+	public function getCavv() {
+		return $this->getParameter( 'cavv' );
+	}
 
-        return $xmlString;
-    }
+	public function getXid() {
+		return $this->getParameter( 'xid' );
+	}
 
-    protected function createResponse($data)
-    {
-        return $this->response = new AuthResponse($this, $data);
-    }
+	public function getEci() {
+		return $this->getParameter( 'eci' );
+	}
 
-    public function getEndpoint()
-    {
-        return $this->endpoint;
-    }
+	public function getEndpoint() {
+		return $this->endpoint;
+	}
+
+	protected function createResponse( $data ) {
+		return $this->response = new AuthResponse( $this, $data );
+	}
 }
