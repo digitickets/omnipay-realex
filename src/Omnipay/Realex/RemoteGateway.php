@@ -90,7 +90,9 @@ class RemoteGateway extends AbstractGateway
 
     public function purchase(array $parameters = array())
     {
-        if (array_key_exists('cardReference', $parameters)) {
+        if (array_key_exists('mobileType', $parameters)) {
+            return $this->createRequest('\Omnipay\Realex\Message\AuthMobileRequest', $parameters);
+        } elseif (array_key_exists('cardReference', $parameters)) {
             return $this->createRequest('\Omnipay\Realex\Message\SavedAuthRequest', $parameters);
         } elseif ($this->get3dSecure()) {
             return $this->createRequest('\Omnipay\Realex\Message\EnrolmentRequest', $parameters);
