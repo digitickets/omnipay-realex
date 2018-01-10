@@ -51,6 +51,16 @@ class AuthMobileRequest extends RemoteAbstractRequest
         return $this->setParameter('token', $value);
     }
 
+    public function getAmount()
+    {
+        return $this->getParameter('amount');
+    }
+
+    public function setAmount($value)
+    {
+        return $this->setParameter('amount', $value);
+    }
+
     /**
      * Get the XML registration string to be sent to the gateway
      *
@@ -90,6 +100,14 @@ class AuthMobileRequest extends RemoteAbstractRequest
         // order ID
         $merchantEl = $domTree->createElement('orderid', $orderId);
         $root->appendChild($merchantEl);
+
+        // Amount isn't required for Apple Pay transaction since it's bundled in the
+        // encrypted payload (token), but for Google Pay, the amount is required to
+        // be sent in the request as a separate XML field.
+        if ($this->getAmount()) {
+            $amountEl = $domTree->createElement('amount', $this->getAmount());
+            $root->appendChild($amountEl);
+        }
 
         $settleEl = $domTree->createElement('autosettle');
         $settleEl->setAttribute('flag', 1);
