@@ -129,12 +129,30 @@ class EnrolmentRequest extends RemoteAbstractRequest
 
         return $response;
     }
+<<<<<<< HEAD
 
     public function getEndpoint()
     {
         return $this->getParameter('authEndpoint');
     }
 
+=======
+
+//    public function getEndpoint()
+//    {
+//        return $this->getParameter('3dSecureEndpoint');
+//    }
+//    public function setAuthEndpoint($value)
+//    {
+//        return $this->setParameter('3dSecureEndpoint', $value);
+//    }
+
+    public function getEndpoint()
+    {
+        return $this->getParameter('authEndpoint');
+    }
+
+>>>>>>> origin/master
     public function setAuthEndpoint($value)
     {
         return $this->setParameter('authEndpoint', $value);
