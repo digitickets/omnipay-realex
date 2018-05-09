@@ -8,10 +8,16 @@ use Omnipay\Common\Message\AbstractRequest;
 /**
  * Realex Auth-Mobile Request
  *
+ * If the `mobileType` parameter is set to `pay-with-google`,
+ * the `amount` and `currency` parameters must be included in
+ * the request as they are not a part of the `token` value
+ * as they are with the `apple-pay` mobile type.
+ *
  * Example:
  *
  * ```
  * $response = $gateway->purchase([
+ *     'transactionId' => 'abc123',
  *     'mobileType' => 'apple-pay',
  *     // payload from mobile transaction
  *     // example below has been truncated and formatted
@@ -51,6 +57,26 @@ class AuthMobileRequest extends RemoteAbstractRequest
         return $this->setParameter('token', $value);
     }
 
+    public function getAmount()
+    {
+        return $this->getParameter('amount');
+    }
+
+    public function setAmount($value)
+    {
+        return $this->setParameter('amount', $value);
+    }
+
+    public function getCurrency()
+    {
+        return $this->getParameter('currency');
+    }
+
+    public function setCurrency($value)
+    {
+        return $this->setParameter('currency', $value);
+    }
+
     /**
      * Get the XML registration string to be sent to the gateway
      *
@@ -60,13 +86,19 @@ class AuthMobileRequest extends RemoteAbstractRequest
     {
         $this->validate('mobileType', 'token', 'transactionId');
 
+        if ($this->getMobileType() === 'pay-with-google') {
+            $this->validate('amount', 'currency');
+        }
+
         // Create the hash
         $timestamp = strftime("%Y%m%d%H%M%S");
         $merchantId = $this->getMerchantId();
         $orderId = $this->getTransactionId();
         $token = $this->getToken();
         $secret = $this->getSecret();
-        $tmp = "$timestamp.$merchantId.$orderId...$token";
+        $amount = $this->getAmount();
+        $currency = $this->getCurrency();
+        $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$token";
         $sha1hash = sha1($tmp);
         $tmp2 = "$sha1hash.$secret";
         $sha1hash = sha1($tmp2);
@@ -90,6 +122,15 @@ class AuthMobileRequest extends RemoteAbstractRequest
         // order ID
         $merchantEl = $domTree->createElement('orderid', $orderId);
         $root->appendChild($merchantEl);
+
+        // Amount isn't required for Apple Pay transaction since it's bundled in the
+        // encrypted payload (token), but for Google Pay, the amount is required to
+        // be sent in the request as a separate XML field.
+        if ($this->getAmount()) {
+            $amountEl = $domTree->createElement('amount', $this->getAmount());
+            $amountEl->setAttribute('currency', $this->getCurrency());
+            $root->appendChild($amountEl);
+        }
 
         $settleEl = $domTree->createElement('autosettle');
         $settleEl->setAttribute('flag', 1);
