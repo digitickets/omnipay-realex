@@ -168,4 +168,9 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->setParameter('endpoint', $value);
     }
+
+    public function getEndpoint()
+    {
+        return $this->getParameter('endpoint');
+    }
 }
