@@ -129,6 +129,11 @@ class VerifySigRequest extends RemoteAbstractRequest
         return $this->endpoint;
     }
 
+    public function setEndpoint($endpoint)
+    {
+        $this->endpoint = $endpoint;
+    }
+
     /**
      * @param mixed $parameters
      *
