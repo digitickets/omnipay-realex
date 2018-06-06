@@ -87,6 +87,16 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->setParameter('3dSecure', $value);
     }
+    protected function createRequest($class, array $parameters)
+    {
+        $obj = new $class($this->httpClient, $this->httpRequest);
+        // Set the endpoint on the subject class if available
+        if (method_exists($obj, 'setEndpoint')) {
+            $obj->setEndpoint($this->getEndpoint());
+        }
+
+        return $obj->initialize(array_replace($this->getParameters(), $parameters));
+    }
 
     public function purchase(array $parameters = array())
     {

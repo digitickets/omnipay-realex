@@ -124,4 +124,9 @@ class EnrolmentRequest extends RemoteAbstractRequest
     {
         return $this->endpoint;
     }
+
+    public function setEndpoint($endpoint)
+    {
+        $this->endpoint = $endpoint;
+    }
 }
