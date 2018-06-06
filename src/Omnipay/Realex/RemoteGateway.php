@@ -171,6 +171,10 @@ class RemoteGateway extends AbstractGateway
 
     public function getEndpoint()
     {
-        return $this->getParameter('endpoint');
+        if (null !== $this->getParameter('endpoint')) {
+            return $this->getParameter('endpoint');
+        } else {
+            return 'https://epage.payandshop.com/epage-remote.cgi';
+        }
     }
 }

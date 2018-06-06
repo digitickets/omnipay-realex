@@ -114,6 +114,10 @@ class EnrolmentRequest extends RemoteAbstractRequest
             $request = new AuthRequest($this->httpClient, $this->httpRequest);
             $request->initialize($this->getParameters());
 
+            if (method_exists($request, 'setEndpoint')) {
+                $request->setEndpoint($this->getEndpoint());
+            }
+
             $response = $request->send();
         }
 
