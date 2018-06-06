@@ -96,4 +96,12 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
             'MD'      => $this->getMerchantData()
         );
     }
+
+    /**
+     * Returns the full xml response
+     */
+    public function getXML()
+    {
+        return $this->xml->asXML();
+    }
 }

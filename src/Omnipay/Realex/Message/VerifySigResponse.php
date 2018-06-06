@@ -89,4 +89,12 @@ class VerifySigResponse extends RemoteAbstractResponse implements RedirectRespon
     {
         return '';
     }
+
+    /**
+     * Returns the full xml response
+     */
+    public function getXML()
+    {
+        return $this->xml->asXML();
+    }
 }
