@@ -51,6 +51,9 @@ class AuthRequest extends RemoteAbstractRequest
     {
         $this->validate('amount', 'currency', 'transactionId');
 
+        // Set the endpoint to be used during the connection
+        $this->setEndpoint($this->getEndpoint());
+
         // Create the hash
         $timestamp = strftime("%Y%m%d%H%M%S");
         $merchantId = $this->getMerchantId();
@@ -162,5 +165,10 @@ class AuthRequest extends RemoteAbstractRequest
     public function getEndpoint()
     {
         return $this->endpoint;
+    }
+
+    public function setEndpoint($value)
+    {
+        $this->endpoint = $value;
     }
 }

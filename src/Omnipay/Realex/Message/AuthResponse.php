@@ -79,4 +79,12 @@ class AuthResponse extends RemoteAbstractResponse implements RedirectResponseInt
     {
         return '';
     }
+
+    /**
+     * Returns the full xml response
+     */
+    public function getXML()
+    {
+        return $this->xml->asXML();
+    }
 }

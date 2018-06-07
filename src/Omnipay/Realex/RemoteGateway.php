@@ -87,6 +87,16 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->setParameter('3dSecure', $value);
     }
+    protected function createRequest($class, array $parameters)
+    {
+        $obj = new $class($this->httpClient, $this->httpRequest);
+        // Set the endpoint on the subject class if available
+        if (method_exists($obj, 'setEndpoint')) {
+            $obj->setEndpoint($this->getEndpoint());
+        }
+
+        return $obj->initialize(array_replace($this->getParameters(), $parameters));
+    }
 
     public function purchase(array $parameters = array())
     {
@@ -151,5 +161,22 @@ class RemoteGateway extends AbstractGateway
     public function updateCustomer(array $parameters = array())
     {
         return $this->createRequest('\Omnipay\Realex\Message\UpdateCustomerRequest', $parameters);
+    }
+
+    /**
+     * Allow the user to set the endpoint
+     */
+    public function setEndpoint($value)
+    {
+        return $this->setParameter('endpoint', $value);
+    }
+
+    public function getEndpoint()
+    {
+        if (null !== $this->getParameter('endpoint')) {
+            return $this->getParameter('endpoint');
+        } else {
+            return 'https://epage.payandshop.com/epage-remote.cgi';
+        }
     }
 }
