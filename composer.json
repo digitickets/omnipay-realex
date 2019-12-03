@@ -20,12 +20,12 @@
         }
     ],
     "autoload": {
-        "psr-0": { "Omnipay\\Realex\\" : "src/" }
+        "psr-4": { "Omnipay\\Realex\\" : "src/" }
     },
     "require": {
-        "omnipay/common": "~2.0"
+        "omnipay/common": "^3"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "~1.4.4"
+        "squizlabs/php_codesniffer": "^3"
     }
 }
