@@ -83,7 +83,11 @@ abstract class RemoteAbstractRequest extends AbstractRequest
             ),
         );
 
-        $httpResponse = $this->httpClient->request('POST', $this->getEndpoint(), $headers, http_build_query($data));
+        if (is_array($data)) {
+            $data = http_build_query($data);
+        }
+
+        $httpResponse = $this->httpClient->request('POST', $this->getEndpoint(), $headers, $data);
 
         return $this->createResponse($httpResponse->getBody()->getContents());
     }
