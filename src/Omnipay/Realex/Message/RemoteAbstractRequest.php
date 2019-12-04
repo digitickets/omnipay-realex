@@ -76,15 +76,16 @@ abstract class RemoteAbstractRequest extends AbstractRequest
     public function sendData($data)
     {
         // register the payment
-        $this->httpClient->setConfig(array(
-            'curl.options' => array(
-                'CURLOPT_SSLVERSION'     => 1,
-                'CURLOPT_SSL_VERIFYPEER' => false,
+        $headers = array(
+            'curl' => array(
+                CURLOPT_SSLVERSION     => 1,
+                CURLOPT_SSL_VERIFYPEER => false,
             ),
-        ));
-        $httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data)->send();
+        );
 
-        return $this->createResponse($httpResponse->getBody(true));
+        $httpResponse = $this->httpClient->request('POST', $this->getEndpoint(), $headers, http_build_query($data));
+
+        return $this->createResponse($httpResponse->getBody()->getContents());
     }
 
     abstract public function getEndpoint();
