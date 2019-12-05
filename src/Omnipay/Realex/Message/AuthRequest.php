@@ -12,29 +12,14 @@ class AuthRequest extends RemoteAbstractRequest
 {
     protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
-    public function getCavv()
-    {
-        return $this->getParameter('cavv');
-    }
-
     public function setCavv($value)
     {
         return $this->setParameter('cavv', $value);
     }
 
-    public function getEci()
-    {
-        return $this->getParameter('eci');
-    }
-
     public function setEci($value)
     {
         return $this->setParameter('eci', $value);
-    }
-
-    public function getXid()
-    {
-        return $this->getParameter('xid');
     }
 
     public function setXid($value)
@@ -52,17 +37,18 @@ class AuthRequest extends RemoteAbstractRequest
         $this->validate('amount', 'currency', 'transactionId');
 
         // Create the hash
-        $timestamp = strftime("%Y%m%d%H%M%S");
+        $timestamp  = strftime("%Y%m%d%H%M%S");
         $merchantId = $this->getMerchantId();
-        $orderId = $this->getTransactionId();
-        $amount = $this->getAmountInteger();
-        $currency = $this->getCurrency();
+        $orderId    = $this->getTransactionId();
+        $amount     = $this->getAmountInteger();
+        $currency   = $this->getCurrency();
         $cardNumber = $this->getCard()->getNumber();
-        $secret = $this->getSecret();
-        $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
-        $sha1hash = sha1($tmp);
-        $tmp2 = "$sha1hash.$secret";
-        $sha1hash = sha1($tmp2);
+        $secret     = $this->getSecret();
+        $tmp        = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
+        $sha1hash   = sha1($tmp);
+        $tmp2       = "$sha1hash.$secret";
+        $sha1hash   = sha1($tmp2);
+
 
         $domTree = new \DOMDocument('1.0', 'UTF-8');
 
@@ -93,6 +79,7 @@ class AuthRequest extends RemoteAbstractRequest
          * @var \Omnipay\Common\CreditCard $card
          */
         $card = $this->getCard();
+        $this->setCode($card->getBillingPostcode(), $card->getBillingAddress1());
 
         // Card details
         $cardEl = $domTree->createElement('card');
@@ -129,10 +116,10 @@ class AuthRequest extends RemoteAbstractRequest
         $root->appendChild($settleEl);
 
         // 3D Secure section
-        $mpiEl = $domTree->createElement('mpi');
+        $mpiEl  = $domTree->createElement('mpi');
         $cavvEl = $domTree->createElement('cavv', $this->getCavv());
-        $xidEl = $domTree->createElement('xid', $this->getXid());
-        $eciEl = $domTree->createElement('eci', $this->getEci());
+        $xidEl  = $domTree->createElement('xid', $this->getXid());
+        $eciEl  = $domTree->createElement('eci', $this->getEci());
         $mpiEl->appendChild($cavvEl);
         $mpiEl->appendChild($xidEl);
         $mpiEl->appendChild($eciEl);
@@ -141,11 +128,13 @@ class AuthRequest extends RemoteAbstractRequest
         $sha1El = $domTree->createElement('sha1hash', $sha1hash);
         $root->appendChild($sha1El);
 
-        $tssEl = $domTree->createElement('tssinfo');
+        $tssEl     = $domTree->createElement('tssinfo');
         $addressEl = $domTree->createElement('address');
         $addressEl->setAttribute('type', 'billing');
-        $countryEl = $domTree->createElement('country', $card->getBillingCountry());
+        $countryEl  = $domTree->createElement('country', $card->getBillingCountry());
+        $postcodeEl = $domTree->createElement('code', $this->getCode());
         $addressEl->appendChild($countryEl);
+        $addressEl->appendChild($postcodeEl);
         $tssEl->appendChild($addressEl);
         $root->appendChild($tssEl);
 
@@ -154,13 +143,28 @@ class AuthRequest extends RemoteAbstractRequest
         return $xmlString;
     }
 
-    protected function createResponse($data)
+    public function getCavv()
     {
-        return $this->response = new AuthResponse($this, $data);
+        return $this->getParameter('cavv');
+    }
+
+    public function getXid()
+    {
+        return $this->getParameter('xid');
+    }
+
+    public function getEci()
+    {
+        return $this->getParameter('eci');
     }
 
     public function getEndpoint()
     {
         return $this->endpoint;
+    }
+
+    protected function createResponse($data)
+    {
+        return $this->response = new AuthResponse($this, $data);
     }
 }

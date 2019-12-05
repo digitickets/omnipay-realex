@@ -11,24 +11,26 @@ use Omnipay\Common\Message\AbstractRequest;
 abstract class RemoteAbstractRequest extends AbstractRequest
 {
     protected $cardBrandMap = array(
-        'mastercard' => 'mc',
-        'diners_club' => 'diners'
+        'mastercard'  => 'mc',
+        'diners_club' => 'diners',
     );
 
-    /**
-     * Override some of the default Omnipay card brand names
-     *
-     * @return mixed
-     */
-    protected function getCardBrand()
+    public function getCode()
     {
-        $brand = $this->getCard()->getBrand();
+        return $this->getParameter('code');
+    }
 
-        if (isset($this->cardBrandMap[$brand])) {
-            $brand = $this->cardBrandMap[$brand];
-        }
+    public function setCode($postcode, $billingAddressLine1)
+    {
+        $postcode            = $this->stripNonNumeric($postcode);
+        $billingAddressLine1 = $this->stripNonNumeric($billingAddressLine1);
 
-        return strtoupper($brand);
+        return $this->setParameter('code', $postcode . '|' . $billingAddressLine1);
+    }
+
+    public function stripNonNumeric($value)
+    {
+        return preg_replace("/[^0-9]/", "", $value);
     }
 
     public function getMerchantId()
@@ -74,20 +76,39 @@ abstract class RemoteAbstractRequest extends AbstractRequest
     public function sendData($data)
     {
         // register the payment
-        $this->httpClient->setConfig(
-            array(
-                'curl.options' => array(
-                    'CURLOPT_SSLVERSION'     => 1,
-                    'CURLOPT_SSL_VERIFYPEER' => false
-                )
-            )
+        $headers = array(
+            'curl' => array(
+                CURLOPT_SSLVERSION     => 1,
+                CURLOPT_SSL_VERIFYPEER => false,
+            ),
         );
-        $httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data)->send();
 
-        return $this->createResponse($httpResponse->getBody(true));
+        if (is_array($data)) {
+            $data = http_build_query($data);
+        }
+
+        $httpResponse = $this->httpClient->request('POST', $this->getEndpoint(), $headers, $data);
+
+        return $this->createResponse($httpResponse->getBody()->getContents());
     }
 
     abstract public function getEndpoint();
 
     abstract protected function createResponse($data);
+
+    /**
+     * Override some of the default Omnipay card brand names
+     *
+     * @return mixed
+     */
+    protected function getCardBrand()
+    {
+        $brand = $this->getCard()->getBrand();
+
+        if (isset($this->cardBrandMap[ $brand ])) {
+            $brand = $this->cardBrandMap[ $brand ];
+        }
+
+        return strtoupper($brand);
+    }
 }
