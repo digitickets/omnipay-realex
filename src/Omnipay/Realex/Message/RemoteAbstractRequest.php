@@ -83,7 +83,7 @@ abstract class RemoteAbstractRequest extends AbstractRequest
             )
         );
 
-        $httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data)->send();
+        $httpResponse = $this->httpClient->post($this->getEndpoint(), null, $data,['timeout' => 7,'connect_timeout' => 7])->send();
 
         return $this->createResponse($httpResponse->getBody(true));
     }
