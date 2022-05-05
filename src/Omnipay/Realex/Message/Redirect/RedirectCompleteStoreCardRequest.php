@@ -11,8 +11,8 @@ class RedirectCompleteStoreCardRequest extends AbstractRequest
 {
     public function getData()
     {
-        $data;
-        foreach (json_decode($this->httpRequest->request->get('hppResponse')) as $key => $value) {
+        $data = [];
+        foreach (json_decode($_POST['hppResponse']) as $key => $value) {
             $data[$key] = base64_decode($value);
         }
 
