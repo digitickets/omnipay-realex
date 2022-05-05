@@ -29,7 +29,7 @@ class DataVaultResponse extends AbstractResponse
 
     public function getMessage()
     {
-        $message;
+        $message = '';
         if (isset($this->data['PMT_SETUP_MSG'])) {
             $message .= $this->data['PMT_SETUP_MSG'] . ' ';
         }
