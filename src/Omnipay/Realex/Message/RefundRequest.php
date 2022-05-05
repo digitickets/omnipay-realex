@@ -9,8 +9,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class RefundRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
-
     public function getTransactionReference()
     {
         return $this->getParameter('transactionReference');
@@ -76,8 +74,7 @@ class RefundRequest extends RemoteAbstractRequest
         // No card number for rebate requests but still needs to be in hash
         $cardNumber = '';
         $secret = $this->getSecret();
-        $tmp
-            = "$timestamp.$merchantId.$originalTransactionId.$amount.$currency.$cardNumber";
+        $tmp = "$timestamp.$merchantId.$originalTransactionId.$amount.$currency.$cardNumber";
         $sha1hash = sha1($tmp);
         $tmp2 = "$sha1hash.$secret";
         $sha1hash = sha1($tmp2);
@@ -91,39 +88,44 @@ class RefundRequest extends RemoteAbstractRequest
         $root = $domTree->appendChild($root);
 
         // merchant ID
-        $merchantEl = $domTree->createElement('merchantid', $merchantId);
+        $merchantEl = $domTree->createElement('merchantid');
+        $merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // account
-        $accountEl = $domTree->createElement('account', $this->getAccount());
+        $accountEl = $domTree->createElement('account');
+        $accountEl->appendChild($domTree->createTextNode($this->getAccount()));
         $root->appendChild($accountEl);
 
         // the ID of the original transaction (confusingly in a tag called 'orderid')
-        $orderIdEl = $domTree->createElement('orderid', $originalTransactionId);
+        $orderIdEl = $domTree->createElement('orderid');
+        $orderIdEl->appendChild($domTree->createTextNode($originalTransactionId));
         $root->appendChild($orderIdEl);
 
         // pasref for the original transaction
-        $pasRefEl = $domTree->createElement(
-            'pasref',
-            $this->getTransactionReference()
-        );
+        $pasRefEl = $domTree->createElement('pasref');
+        $pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
         $root->appendChild($pasRefEl);
 
         // authcode returned for original transaction
-        $authCodeEl = $domTree->createElement('authcode', $this->getAuthCode());
+        $authCodeEl = $domTree->createElement('authcode');
+        $authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
         $root->appendChild($authCodeEl);
 
         // amount
-        $amountEl = $domTree->createElement('amount', $amount);
+        $amountEl = $domTree->createElement('amount');
+        $amountEl->appendChild($domTree->createTextNode($amount));
         $amountEl->setAttribute('currency', $this->getCurrency());
         $root->appendChild($amountEl);
 
         // refund hash
         $refundHash = sha1($this->getRefundPassword());
-        $refundHashEl = $domTree->createElement('refundhash', $refundHash);
+        $refundHashEl = $domTree->createElement('refundhash');
+        $refundHashEl->appendChild($domTree->createTextNode($refundHash));
         $root->appendChild($refundHashEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
+        $sha1El = $domTree->createElement('sha1hash');
+        $sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);
@@ -138,6 +140,11 @@ class RefundRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('AuthEndpoint');
+    }
+
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('AuthEndpoint', $value);
     }
 }

@@ -28,7 +28,7 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
 
     public function getMessage()
     {
-        $message = (string)$this->xml->message;
+        $message = (string) $this->xml->message;
 
         return $message;
     }
@@ -51,7 +51,7 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
 
     public function getRedirectUrl()
     {
-        return (string)$this->xml->url;
+        return (string) $this->xml->url;
     }
 
     public function getRedirectMethod()
@@ -72,15 +72,15 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
         $card = $this->request->getCard();
         $data = array(
             'transactionId' => $this->request->getTransactionId(),
-            'currency'             => $this->request->getCurrency(),
-            'amount'               => $this->request->getAmount(),
-            'number'               => $card->getNumber(),
-            'expiryMonth'          => $card->getExpiryMonth(),
-            'expiryYear'           => $card->getExpiryYear(),
-            'billingName'          => $card->getBillingName(),
-            'cvv'                  => $card->getCvv(),
-            'issueNumber'          => $card->getIssueNumber(),
-            'billingCountry'       => $card->getBillingCountry()
+            'currency' => $this->request->getCurrency(),
+            'amount' => $this->request->getAmount(),
+            'number' => $card->getNumber(),
+            'expiryMonth' => $card->getExpiryMonth(),
+            'expiryYear' => $card->getExpiryYear(),
+            'billingName' => $card->getBillingName(),
+            'cvv' => $card->getCvv(),
+            'issueNumber' => $card->getIssueNumber(),
+            'billingCountry' => $card->getBillingCountry()
         );
         $serialised = json_encode($data);
         $encoded = base64_encode($serialised);
@@ -91,9 +91,9 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
     public function getRedirectData()
     {
         return array(
-            'PaReq'   => (string)$this->xml->pareq,
+            'PaReq' => (string) $this->xml->pareq,
             'TermUrl' => $this->request->getReturnUrl(),
-            'MD'      => $this->getMerchantData()
+            'MD' => $this->getMerchantData()
         );
     }
 }

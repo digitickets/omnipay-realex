@@ -34,27 +34,27 @@ class AuthResponse extends RemoteAbstractResponse implements RedirectResponseInt
 
     public function getMessage()
     {
-        return (string)$this->xml->message;
+        return (string) $this->xml->message;
     }
 
     public function getTransactionId()
     {
-        return ($this->xml->orderid) ? (string)$this->xml->orderid : null;
+        return ($this->xml->orderid) ? (string) $this->xml->orderid : null;
     }
 
     public function getTransactionReference()
     {
-        return ($this->xml->pasref) ? (string)$this->xml->pasref : null;
+        return ($this->xml->pasref) ? (string) $this->xml->pasref : null;
     }
 
     public function getAuthCode()
     {
-        return ($this->xml->authcode) ? (string)$this->xml->authcode : null;
+        return ($this->xml->authcode) ? (string) $this->xml->authcode : null;
     }
 
     public function getBatchId()
     {
-        return ($this->xml->batchid) ? (string)$this->xml->batchid : null;
+        return ($this->xml->batchid) ? (string) $this->xml->batchid : null;
     }
 
     public function isRedirect()

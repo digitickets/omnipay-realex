@@ -23,9 +23,12 @@ class RemoteGateway extends AbstractGateway
     {
         return array(
             'merchantId' => '',
-            'account'    => '',
-            'secret'     => '',
-            '3dSecure'   => 0
+            'account' => '',
+            'secret' => '',
+            '3dSecure' => 0,
+            'authEndpoint' => 'https://epage.payandshop.com/epage-remote.cgi',
+            'secureDataVaultEndpoint' => 'https://epage.payandshop.com/epage-remote-plugins.cgi',
+            '3dSecureEndpoint' => 'https://epage.payandshop.com/epage-3dsecure.cgi'
         );
     }
 
@@ -90,6 +93,7 @@ class RemoteGateway extends AbstractGateway
 
     public function purchase(array $parameters = array())
     {
+
         if (array_key_exists('mobileType', $parameters)) {
             return $this->createRequest('\Omnipay\Realex\Message\AuthMobileRequest', $parameters);
         } elseif (array_key_exists('cardReference', $parameters)) {
@@ -151,5 +155,38 @@ class RemoteGateway extends AbstractGateway
     public function updateCustomer(array $parameters = array())
     {
         return $this->createRequest('\Omnipay\Realex\Message\UpdateCustomerRequest', $parameters);
+    }
+
+    /**
+     * Setup service endpoint links for different realex service providers
+     */
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('authEndpoint', $value);
+    }
+
+    public function getAuthEndpoint()
+    {
+        return $this->getParameter('authEndpoint');
+    }
+
+    public function setSecureDataVaultEndpoint($value)
+    {
+        return $this->setParameter('secureDataVaultEndpoint', $value);
+    }
+
+    public function getSecureDataVaultEndpoint()
+    {
+        return $this->getParameter('secureDataVaultEndpoint');
+    }
+
+    public function set3DSecureEndpoint($value)
+    {
+        return $this->setParameter('3dSecureEndpoint', $value);
+    }
+
+    public function get3DSecureEndpoint()
+    {
+        return $this->getParameter('3dSecureEndpoint');
     }
 }

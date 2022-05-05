@@ -10,8 +10,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class SavedAuthRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
-
     public function getCavv()
     {
         return $this->getParameter('cavv');
@@ -62,16 +60,16 @@ class SavedAuthRequest extends RemoteAbstractRequest
         $this->validate('amount', 'currency', 'transactionId');
 
         // Create the hash
-        $timestamp  = strftime("%Y%m%d%H%M%S");
+        $timestamp = strftime("%Y%m%d%H%M%S");
         $merchantId = $this->getMerchantId();
-        $orderId    = $this->getTransactionId();
-        $amount     = $this->getAmountInteger();
-        $currency   = $this->getCurrency();
-        $secret     = $this->getSecret();
-        $tmp        = "$timestamp.$merchantId.$orderId.$amount.$currency.{$this->getCustomerRef()}";
-        $sha1hash   = sha1($tmp);
-        $tmp2       = "$sha1hash.$secret";
-        $sha1hash   = sha1($tmp2);
+        $orderId = $this->getTransactionId();
+        $amount = $this->getAmountInteger();
+        $currency = $this->getCurrency();
+        $secret = $this->getSecret();
+        $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.{$this->getCustomerRef()}";
+        $sha1hash = sha1($tmp);
+        $tmp2 = "$sha1hash.$secret";
+        $sha1hash = sha1($tmp2);
 
         /**
          * @var \Omnipay\Common\CreditCard $card
@@ -87,34 +85,41 @@ class SavedAuthRequest extends RemoteAbstractRequest
         $root = $domTree->appendChild($root);
 
         // merchant ID
-        $merchantEl = $domTree->createElement('merchantid', $merchantId);
+        $merchantEl = $domTree->createElement('merchantid');
+        $merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // account
-        $merchantEl = $domTree->createElement('account', $this->getAccount());
+        $merchantEl = $domTree->createElement('account');
+        $merchantEl->appendChild($domTree->createTextNode($this->getAccount()));
         $root->appendChild($merchantEl);
 
         // order ID
-        $merchantEl = $domTree->createElement('orderid', $orderId);
+        $merchantEl = $domTree->createElement('orderid');
+        $merchantEl->appendChild($domTree->createTextNode($orderId));
         $root->appendChild($merchantEl);
 
         // amount
-        $amountEl = $domTree->createElement('amount', $amount);
+        $amountEl = $domTree->createElement('amount');
         $amountEl->setAttribute('currency', $this->getCurrency());
+        $amountEl->appendChild($domTree->createTextNode($amount));
         $root->appendChild($amountEl);
 
         $paymentDataEl = $domTree->createElement('paymentdata');
-        $cvnEl         = $domTree->createElement('cvn');
-        $numberEl      = $domTree->createElement('number', $card->getCvv());
+        $cvnEl = $domTree->createElement('cvn');
+        $numberEl = $domTree->createElement('number');
+        $numberEl->appendChild($domTree->createTextNode($card->getCvv()));
 
         $cvnEl->appendChild($numberEl);
         $paymentDataEl->appendChild($cvnEl);
         $root->appendChild($paymentDataEl);
 
-        $payerRefEl = $domTree->createElement('payerref', $this->getCustomerRef());
+        $payerRefEl = $domTree->createElement('payerref');
+        $payerRefEl->appendChild($domTree->createTextNode($this->getCustomerRef()));
         $root->appendChild($payerRefEl);
 
-        $paymentMethodEl = $domTree->createElement('paymentmethod', $this->getCardReference());
+        $paymentMethodEl = $domTree->createElement('paymentmethod');
+        $paymentMethodEl->appendChild($domTree->createTextNode($this->getCardReference()));
         $root->appendChild($paymentMethodEl);
 
         $settleEl = $domTree->createElement('autosettle');
@@ -122,22 +127,27 @@ class SavedAuthRequest extends RemoteAbstractRequest
         $root->appendChild($settleEl);
 
         // 3D Secure section
-        $mpiEl  = $domTree->createElement('mpi');
-        $cavvEl = $domTree->createElement('cavv', $this->getCavv());
-        $xidEl  = $domTree->createElement('xid', $this->getXid());
-        $eciEl  = $domTree->createElement('eci', $this->getEci());
+        $mpiEl = $domTree->createElement('mpi');
+        $cavvEl = $domTree->createElement('cavv');
+        $cavvEl->appendChild($domTree->createTextNode($this->getCavv()));
+        $xidEl = $domTree->createElement('xid');
+        $xidEl->appendChild($domTree->createTextNode($this->getXid()));
+        $eciEl = $domTree->createElement('eci');
+        $eciEl->appendChild($domTree->createTextNode($this->getEci()));
         $mpiEl->appendChild($cavvEl);
         $mpiEl->appendChild($xidEl);
         $mpiEl->appendChild($eciEl);
         $root->appendChild($mpiEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
+        $sha1El = $domTree->createElement('sha1hash');
+        $sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
-        $tssEl     = $domTree->createElement('tssinfo');
+        $tssEl = $domTree->createElement('tssinfo');
         $addressEl = $domTree->createElement('address');
         $addressEl->setAttribute('type', 'billing');
-        $countryEl = $domTree->createElement('country', $card->getBillingCountry());
+        $countryEl = $domTree->createElement('country');
+        $countryEl->appendChild($domTree->createTextNode($card->getBillingCountry()));
         $addressEl->appendChild($countryEl);
         $tssEl->appendChild($addressEl);
         $root->appendChild($tssEl);
@@ -154,6 +164,11 @@ class SavedAuthRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('SecureDataVaultEndpoint');
+    }
+
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('SecureDataVaultEndpoint', $value);
     }
 }

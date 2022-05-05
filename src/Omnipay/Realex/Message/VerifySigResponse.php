@@ -32,7 +32,7 @@ class VerifySigResponse extends RemoteAbstractResponse implements RedirectRespon
     {
         $matches = $this->xml->xpath('//' . $key);
         if (!empty($matches)) {
-            $value = (string)$matches[0];
+            $value = (string) $matches[0];
         } else {
             $value = '';
         }
@@ -51,7 +51,7 @@ class VerifySigResponse extends RemoteAbstractResponse implements RedirectRespon
         if ($this->xml->threedsecure->status == 'N') {
             $message = '3D Secure Authentication Unsuccessful';
         } else {
-            $message = (string)$this->xml->message;
+            $message = (string) $this->xml->message;
         }
 
         return $message;
@@ -59,7 +59,7 @@ class VerifySigResponse extends RemoteAbstractResponse implements RedirectRespon
 
     public function getTransactionId()
     {
-        return ($this->xml->orderid) ? (string)$this->xml->orderid : null;
+        return ($this->xml->orderid) ? (string) $this->xml->orderid : null;
     }
 
     public function getTransactionReference()

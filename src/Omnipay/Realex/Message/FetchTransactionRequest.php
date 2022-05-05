@@ -9,7 +9,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class FetchTransactionRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
 
     /**
      * Get the XML registration string to be sent to the gateway
@@ -43,18 +42,22 @@ class FetchTransactionRequest extends RemoteAbstractRequest
         $root = $domTree->appendChild($root);
 
         // merchant ID
-        $merchantEl = $domTree->createElement('merchantid', $merchantId);
+        $merchantEl = $domTree->createElement('merchantid');
+        $merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // account
-        $accountEl = $domTree->createElement('account', $this->getAccount());
+        $accountEl = $domTree->createElement('account');
+        $accountEl->appendChild($domTree->createTextNode($this->getAccount()));
         $root->appendChild($accountEl);
 
         // original order ID
-        $orderIdEl = $domTree->createElement('orderid', $orderId);
+        $orderIdEl = $domTree->createElement('orderid');
+        $orderIdEl->appendChild($domTree->createTextNode($orderId));
         $root->appendChild($orderIdEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
+        $sha1El = $domTree->createElement('sha1hash');
+        $sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);
@@ -69,6 +72,11 @@ class FetchTransactionRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('3dSecureEndpoint');
+    }
+
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('3dSecureEndpoint', $value);
     }
 }

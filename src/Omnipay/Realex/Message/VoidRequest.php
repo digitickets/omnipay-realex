@@ -9,8 +9,6 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class VoidRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
-
     public function getTransactionReference()
     {
         return $this->getParameter('pasRef');
@@ -63,26 +61,32 @@ class VoidRequest extends RemoteAbstractRequest
         $root = $domTree->appendChild($root);
 
         // merchant ID
-        $merchantEl = $domTree->createElement('merchantid', $merchantId);
+        $merchantEl = $domTree->createElement('merchantid');
+        $merchantEl->appendChild($domTree->createTextNode($merchantId));
         $root->appendChild($merchantEl);
 
         // account
-        $accountEl = $domTree->createElement('account', $this->getAccount());
+        $accountEl = $domTree->createElement('account');
+        $accountEl->appendChild($domTree->createTextNode($this->getAccount()));
         $root->appendChild($accountEl);
 
         // original order ID
-        $orderIdEl = $domTree->createElement('orderid', $orderId);
+        $orderIdEl = $domTree->createElement('orderid');
+        $orderIdEl->appendChild($domTree->createTextNode($orderId));
         $root->appendChild($orderIdEl);
 
         // pasref returned for original transaction
-        $pasRefEl = $domTree->createElement('pasref', $this->getTransactionReference());
+        $pasRefEl = $domTree->createElement('pasref');
+        $pasRefEl->appendChild($domTree->createTextNode($this->getTransactionReference()));
         $root->appendChild($pasRefEl);
 
         // authcode returned for original transaction
-        $authCodeEl = $domTree->createElement('authcode', $this->getAuthCode());
+        $authCodeEl = $domTree->createElement('authcode');
+        $authCodeEl->appendChild($domTree->createTextNode($this->getAuthCode()));
         $root->appendChild($authCodeEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
+        $sha1El = $domTree->createElement('sha1hash');
+        $sha1El->appendChild($domTree->createTextNode($sha1hash));
         $root->appendChild($sha1El);
 
         $xmlString = $domTree->saveXML($root);
@@ -97,6 +101,11 @@ class VoidRequest extends RemoteAbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint;
+        return $this->getParameter('SecureDataVaultEndpoint');
+    }
+
+    public function setAuthEndpoint($value)
+    {
+        return $this->setParameter('SecureDataVaultEndpoint', $value);
     }
 }
